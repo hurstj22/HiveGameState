@@ -6,7 +6,6 @@ import android.graphics.Path;
 
 public class Tile {
 
-
     /**
      * Method for drawing hexagon.
      * @param mCanvas
