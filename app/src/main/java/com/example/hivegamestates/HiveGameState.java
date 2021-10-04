@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 public class HiveGameState {
 
-    public enum turn{
+    public enum Turn{
         PLAYER1,
         COMPUTER,
         NETWORKPLAYER
     }
 
-    public enum bugs{ //Do we need this enum in here if it's already in the Tile class?
+    public enum Bugs{ //Do we need this enum in here if it's already in the Tile class?
         BEE,
         ANT,
         BEETLE,
@@ -19,17 +19,19 @@ public class HiveGameState {
     }
 
     //Variables of gameState
-    private ArrayList<Tile> gamePieces;
-    private bugs piecesRemain[][];
-    private turn whoseTurn;
+    private ArrayList<Tile> gameBoard;
+    private ArrayList<Tile> displayBoard;
+    private Bugs piecesRemain[][];
+    private Turn whoseTurn;
 
     /**
      * Default constructor.
      */
     public HiveGameState(){
-        gamePieces = new ArrayList<Tile>();
-        piecesRemain = new bugs[2][5];
-        whoseTurn = turn.PLAYER1;
+        gameBoard = new ArrayList<Tile>();
+        displayBoard = new ArrayList<Tile>();
+        piecesRemain = new Bugs[2][5];
+        whoseTurn = Turn.PLAYER1;
     }
 
     /**
@@ -37,11 +39,15 @@ public class HiveGameState {
      * @param other
      */
     public HiveGameState(HiveGameState other){
-        this.gamePieces = new ArrayList<Tile>();
-        for(Tile tile: other.gamePieces){
-            this.gamePieces = other.gamePieces;
+        this.gameBoard = new ArrayList<Tile>();
+        for(Tile tile: other.gameBoard){
+            this.gameBoard = other.gameBoard;
         }
-        this.piecesRemain = new bugs[2][5];
+        this.displayBoard = new ArrayList<Tile>();
+        for(Tile tile: other.displayBoard){
+            this.displayBoard = other.displayBoard;
+        }
+        this.piecesRemain = new Bugs[2][5];
         for (int i = 0; i < other.piecesRemain.length; i++){
             for (int j = 0; j < other.piecesRemain[i].length; j++){
                 this.piecesRemain[i][j] = other.piecesRemain[i][j];
@@ -57,7 +63,7 @@ public class HiveGameState {
     public String toString(){
         String currentState = "";
 
-        for (Tile tile: gamePieces){
+        for (Tile tile: gameBoard){
             switch(tile.getType()){
                 case EMPTY:
                     currentState += " "; //add space for nothing there
