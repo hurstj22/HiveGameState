@@ -17,27 +17,53 @@ public class Tile {
         SPIDER
     }
 
+    public enum playerPiece {
+        BLACK,
+        WHITE
+    }
+
     // Class Variables
     private Piece type;
     private Tile onTopOf;
-//    private int coordX;  Do we need these in here? This would represent the position in the list
-//    private int coordY;  to make it (potentially) easier to check for valid moves.
+    private int coordX;
+    private int coordY;
 
-
-    public Tile() {
+    /**
+     * Makes a default constructor for a tile
+     * @param x
+     * @param y
+     */
+    public Tile(int x, int y) {
         //default constructor could make a null tile
         type = Piece.EMPTY;
         onTopOf = null;
+        coordX = x;
+        coordY = y;
     }
 
     /**
-     * Copy constructor for the tile class
+     *
      * @param piece which type of piece is getting copied
      * @param tile
      */
-    public Tile(Piece piece, Tile tile) {
+    public Tile(Piece piece, Tile tile, int x, int y) {
         type = piece;
         onTopOf = tile.onTopOf;
+        coordX = x;
+        coordY = y;
+    }
+
+    /**
+     * Copy constructor
+     * @param other
+     * @return a new copied Tile object
+     */
+    public Tile Tile(Tile other){
+        Tile tile = new Tile(other.coordX, other.coordY);
+        tile.onTopOf = other.onTopOf;
+        tile.type = other.type;
+
+        return tile;
     }
 
     public void setType(Piece piece) {
