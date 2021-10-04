@@ -30,9 +30,14 @@ public class Tile {
         onTopOf = null;
     }
 
+    /**
+     * Copy constructor for the tile class
+     * @param piece which type of piece is getting copied
+     * @param tile
+     */
     public Tile(Piece piece, Tile tile) {
         type = piece;
-        onTopOf = tile;
+        onTopOf = tile.onTopOf;
     }
 
     public void setType(Piece piece) {
