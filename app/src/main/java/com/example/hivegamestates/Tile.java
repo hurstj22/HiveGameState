@@ -17,7 +17,8 @@ public class Tile {
         SPIDER
     }
 
-    public enum playerPiece {
+    public enum PlayerPiece {
+        EMPTY,
         BLACK,
         WHITE
     }
@@ -25,7 +26,8 @@ public class Tile {
     // Class Variables
     private Piece type;
     private Tile onTopOf;
-    private int coordX;
+    private PlayerPiece piece;
+    private int coordX; //integer index in the arrayList of tiles
     private int coordY;
 
     /**
@@ -33,12 +35,13 @@ public class Tile {
      * @param x
      * @param y
      */
-    public Tile(int x, int y) {
+    public Tile(int x, int y, PlayerPiece piece) {
         //default constructor could make a null tile
         type = Piece.EMPTY;
         onTopOf = null;
         coordX = x;
         coordY = y;
+        this.piece = piece;
     }
 
     /**
@@ -46,11 +49,12 @@ public class Tile {
      * @param piece which type of piece is getting copied
      * @param tile
      */
-    public Tile(Piece piece, Tile tile, int x, int y) {
+    public Tile(Piece piece, Tile tile, int x, int y, PlayerPiece p) {
         type = piece;
         onTopOf = tile.onTopOf;
         coordX = x;
         coordY = y;
+        this.piece = p;
     }
 
     /**
@@ -59,7 +63,7 @@ public class Tile {
      * @return a new copied Tile object
      */
     public Tile Tile(Tile other){
-        Tile tile = new Tile(other.coordX, other.coordY);
+        Tile tile = new Tile(other.coordX, other.coordY, other.piece);
         tile.onTopOf = other.onTopOf;
         tile.type = other.type;
 
@@ -80,6 +84,10 @@ public class Tile {
 
     public Tile getOnTopOf() {
         return onTopOf;
+    }
+
+    public PlayerPiece getPiece(){
+        return piece;
     }
 
     /**
