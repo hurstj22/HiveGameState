@@ -6,6 +6,56 @@ import android.graphics.Path;
 
 public class Tile {
 
+
+    public enum Piece {
+        EMPTY,
+        POTENTIAL,
+        QUEEN_BEE,
+        BEETLE,
+        ANT,
+        GRASSHOPPER,
+        SPIDER
+    }
+
+    // Class Variables
+    private Piece type;
+    private Tile onTopOf;
+//    private int coordX;  Do we need these in here? This would represent the position in the list
+//    private int coordY;  to make it (potentially) easier to check for valid moves.
+
+
+    public Tile() {
+        //default constructor could make a null tile
+        type = Piece.EMPTY;
+        onTopOf = null;
+    }
+
+    /**
+     * Copy constructor for the tile class
+     * @param piece which type of piece is getting copied
+     * @param tile
+     */
+    public Tile(Piece piece, Tile tile) {
+        type = piece;
+        onTopOf = tile.onTopOf;
+    }
+
+    public void setType(Piece piece) {
+        type = piece;
+    }
+
+    public void setOnTopOf(Tile tile) {
+        onTopOf = tile;
+    }
+
+    public Piece getType() {
+        return type;
+    }
+
+    public Tile getOnTopOf() {
+        return onTopOf;
+    }
+
     /**
      * Method for drawing hexagon.
      * @param mCanvas

@@ -10,7 +10,7 @@ public class HiveGameState {
         NETWORKPLAYER
     }
 
-    public enum bugs{
+    public enum bugs{ //Do we need this enum in here if it's already in the Tile class?
         BEE,
         ANT,
         BEETLE,
@@ -55,15 +55,33 @@ public class HiveGameState {
      */
     @Override
     public String toString(){
+        String currentState = "";
+
         for (Tile tile: gamePieces){
-            if (tile == null){
+            switch(tile.getType()){
+                case EMPTY:
+                    currentState += " "; //add space for nothing there
+                    break;
+                case QUEEN_BEE:
 
-            }
-            //will print
-            else{
+                    break;
+                case ANT:
 
+                    break;
+                case BEETLE:
+
+                    break;
+                case SPIDER:
+
+                    break;
+                case GRASSHOPPER:
+
+                    break;
+                case POTENTIAL:
+                    currentState += "P"; //add P for potential future spot
+                    break;
             }
         }
-        return "";
+        return currentState;
     }
 }
