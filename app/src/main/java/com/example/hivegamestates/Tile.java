@@ -84,7 +84,7 @@ public class Tile {
         return onTopOf;
     }
 
-    public PlayerPiece getPiece(){
+    public PlayerPiece getPlayerPiece(){
         return piece;
     }
 

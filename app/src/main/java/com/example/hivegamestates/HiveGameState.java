@@ -82,7 +82,55 @@ public class HiveGameState {
     }
 
     /**
-     * Method to print out gameState of app in readable format.
+     * Checks the spot a piece is trying to move to determine if it is
+     * a valid move according to the movement rules
+     * @param tile the piece that is trying to move
+     * @param xCoord the x coordinate where the piece is moving
+     * @param yCoord the y coordinate where the piece is moving
+     * @return true if can move there, false if not
+     */
+    public boolean validMove(Tile tile, int xCoord, int yCoord){
+        if(!breakHive(tile, xCoord, yCoord)){//as long as the move doesn't break the hive
+            //and the type isn't grasshopper or beetle since they
+            //don't obey the freedom of movement rule
+            if(tile.getType() != Tile.Bug.GRASSHOPPER || tile.getType() != Tile.Bug.BEETLE){
+                if(freedom(tile)){//obeys freedom of movement (not surrounded)
+                    return true;
+                }
+            }
+            else{ //type IS grasshopper or beetle and the move doesn't break the hive
+                return true;
+            }
+        } //move breaks the hive :(
+        return false;
+    }
+
+    /**
+     * Checks the hive (ie gameboard) to see if the entire board is connected and if
+     * without the Tile in the spot it currently is the board would STILL be connected
+     * @param tile the piece being checked against breaking the hive
+     * @param xCoord the x coordinate it is trying to move to (not sure if neccesary)
+     * @param yCoord the y coordinate it is trying to move to (not sure if neccesary)
+     * @return false if move would NOT break the hive, true if move would break hive
+     */
+    public boolean breakHive(Tile tile, int xCoord, int yCoord){
+
+        return false;
+    }
+
+    /**
+     * checks a tile to see if it is surrounded to the point
+     * where it no longer has freedom of movement
+     * @param tile the piece being checked
+     * @return true if it is free to move, false if it is trapped
+     */
+    public boolean freedom(Tile tile){
+
+        return false;
+    }
+
+    /**
+     * Method to print out gameState in readable format.
      * @return
      */
     @Override
@@ -95,22 +143,22 @@ public class HiveGameState {
                         currentState += " "; //add space for nothing there
                         break;
                     case QUEEN_BEE:
-                        currentState += tile.getPiece() + "Q";
+                        currentState += tile.getPlayerPiece().name() + "Q";
                         break;
                     case ANT:
-                        currentState += tile.getPiece() + "A";
+                        currentState += tile.getPlayerPiece().name() + "A";
                         break;
                     case BEETLE:
-                        currentState += tile.getPiece() + "B";
+                        currentState += tile.getPlayerPiece().name() + "B";
                         break;
                     case SPIDER:
-                        currentState += tile.getPiece() + "S";
+                        currentState += tile.getPlayerPiece().name() + "S";
                         break;
                     case GRASSHOPPER:
-                        currentState += tile.getPiece() + "G";
+                        currentState += tile.getPlayerPiece().name() + "G";
                         break;
                     case POTENTIAL:
-                        currentState += tile.getPiece() + "P"; //add P for potential future spot
+                        currentState += tile.getPlayerPiece().name() + "P"; //add P for potential future spot
                         break;
                 }
                 currentState += "\n"; //end of the row, print onto next line
