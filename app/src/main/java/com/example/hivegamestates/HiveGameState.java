@@ -1,5 +1,8 @@
 package com.example.hivegamestates;
 
+import android.app.Activity;
+import android.content.Intent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +52,35 @@ public class HiveGameState {
     }
 
     /**
+     * Creates a new gamestate object and
+     * is called when the new game button is clicked
+     * @return
+     */
+    public boolean newGame(){
+        new HiveGameState(); //creates a new blank gameState object
+        return true;
+    }
+
+    /**
+     * Exits the game,
+     * called when the exit game button is clicked
+     * @return
+     */
+    public boolean endGame(){
+        return true;
+    }
+
+    /**
+     * Takes in the previous gamestate
+     * and sets the current gameState equal to it
+     * using deep copy constructor
+     * @return
+     */
+    public boolean undoMove(HiveGameState previousGameState){
+        return true;
+    }
+
+    /**
      * Method to print out gameState of app in readable format.
      * @return
      */
@@ -80,6 +112,7 @@ public class HiveGameState {
                         currentState += tile.getPiece() + "P"; //add P for potential future spot
                         break;
                 }
+                currentState += "\n"; //end of the row, print onto next line
             }
         }
         return currentState;
