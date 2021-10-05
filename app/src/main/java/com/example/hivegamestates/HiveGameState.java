@@ -77,6 +77,7 @@ public class HiveGameState {
      * @return
      */
     public boolean undoMove(HiveGameState previousGameState){
+        new HiveGameState(previousGameState);
         return true;
     }
 
