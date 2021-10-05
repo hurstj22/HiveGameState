@@ -6,7 +6,7 @@ import android.graphics.Path;
 
 public class Tile {
 
-    private enum Bugs {
+    public enum Bug {
         EMPTY,
         POTENTIAL,
         QUEEN_BEE,
