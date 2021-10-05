@@ -70,22 +70,22 @@ public class HiveGameState {
                     currentState += " "; //add space for nothing there
                     break;
                 case QUEEN_BEE:
-
+                    currentState += tile.getPiece() + "Q";
                     break;
                 case ANT:
-
+                    currentState += tile.getPiece() + "A";
                     break;
                 case BEETLE:
-
+                    currentState += tile.getPiece() + "B";
                     break;
                 case SPIDER:
-
+                    currentState += tile.getPiece() + "S";
                     break;
                 case GRASSHOPPER:
-
+                    currentState += tile.getPiece() + "G";
                     break;
                 case POTENTIAL:
-                    currentState += "P"; //add P for potential future spot
+                    currentState += tile.getPiece() + "P"; //add P for potential future spot
                     break;
             }
         }
