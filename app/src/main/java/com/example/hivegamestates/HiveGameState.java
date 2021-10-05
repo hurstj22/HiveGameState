@@ -1,6 +1,7 @@
 package com.example.hivegamestates;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class HiveGameState {
 
@@ -19,8 +20,8 @@ public class HiveGameState {
     }
 
     //Variables of gameState
-    private ArrayList<Tile> gameBoard;
-    private ArrayList<Tile> displayBoard;
+    private ArrayList<ArrayList<Tile>> gameBoard;
+    private ArrayList<ArrayList<Tile>> displayBoard;
     private Bugs piecesRemain[][];
     private Turn whoseTurn;
 
@@ -28,8 +29,8 @@ public class HiveGameState {
      * Default constructor.
      */
     public HiveGameState(){
-        gameBoard = new ArrayList<Tile>();
-        displayBoard = new ArrayList<Tile>();
+        gameBoard = new ArrayList<ArrayList<Tile>>();
+        displayBoard = new ArrayList<ArrayList<Tile>>();
         piecesRemain = new Bugs[2][5];
         whoseTurn = Turn.PLAYER1;
     }
@@ -39,13 +40,13 @@ public class HiveGameState {
      * @param other
      */
     public HiveGameState(HiveGameState other){
-        this.gameBoard = new ArrayList<Tile>();
-        for(Tile tile: other.gameBoard){
-            this.gameBoard = other.gameBoard;
+        this.gameBoard = new ArrayList<ArrayList<Tile>>();
+        for(int index = 0; index < gameBoard.size(); index++){
+            other.gameBoard.add(new ArrayList<Tile>(gameBoard.get(index)));
         }
-        this.displayBoard = new ArrayList<Tile>();
-        for(Tile tile: other.displayBoard){
-            this.displayBoard = other.displayBoard;
+        this.displayBoard = new ArrayList<ArrayList<Tile>>();
+        for(int index = 0; index < displayBoard.size(); index++) {
+            other.displayBoard.add(new ArrayList<Tile>(displayBoard.get(index)));
         }
         this.piecesRemain = new Bugs[2][5];
         for (int i = 0; i < other.piecesRemain.length; i++){
@@ -90,4 +91,6 @@ public class HiveGameState {
         }
         return currentState;
     }
+
+
 }
