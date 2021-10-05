@@ -115,7 +115,7 @@ public class HiveGameState {
      */
     public boolean breakHive(Tile tile, int xCoord, int yCoord){
 
-        return false;
+        return true;
     }
 
     /**
@@ -126,7 +126,7 @@ public class HiveGameState {
      */
     public boolean freedom(Tile tile){
 
-        return false;
+        return true;
     }
 
     /**
