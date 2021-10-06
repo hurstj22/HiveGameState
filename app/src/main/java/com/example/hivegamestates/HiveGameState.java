@@ -19,7 +19,7 @@ public class HiveGameState {
     private ArrayList<ArrayList<Tile>> displayBoard;
     private Tile.Bug piecesRemain[][];
     private Turn whoseTurn;
-
+    private ArrayList<Tile> potentialMoves;
     /**
      * Default constructor.
      */
@@ -103,6 +103,42 @@ public class HiveGameState {
             }
         } //move breaks the hive :(
         return false;
+    }
+
+    /**
+     * Highlights the potential moves of a selected piece. The class variable potentials is
+     * changed to reflect potential moves.
+     * @param tile the selected piece
+     * @return true if potential moves exist. false if not.
+     */
+    public boolean selectTile(Tile tile) {
+        if(validMove(tile, tile.getCoordX(), tile.getCoordY())) {
+            //if the piece can be moved legally
+            switch (tile.getType()){
+                case ANT:
+                    //
+                case BEETLE:
+                    //
+                case GRASSHOPPER:
+                    //
+                case SPIDER:
+                    //
+                case QUEEN_BEE:
+                    //
+                case EMPTY:
+                    //
+                    return false;
+                case POTENTIAL:
+                    //
+                    return false;
+
+            }
+
+        }
+
+
+        return false;
+
     }
 
     /**

@@ -76,6 +76,16 @@ public class Tile {
         onTopOf = tile;
     }
 
+    public void setCoordX(int coordX) {
+        this.coordX = coordX;
+    }
+    public int getCoordX() {
+        return coordX;
+    }
+    public int getCoordY() {
+        return coordY;
+    }
+
     public Bug getType() {
         return type;
     }
@@ -87,6 +97,9 @@ public class Tile {
     public PlayerPiece getPlayerPiece(){
         return piece;
     }
+
+
+
 
     /**
      * Method for drawing hexagon.
