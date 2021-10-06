@@ -17,12 +17,28 @@ public class HiveGameState {
     private Tile.Bug piecesRemain[][];
     private Turn whoseTurn;
 
+    private static final int tileSize = 300;
+
     /**
      * Default constructor.
      */
     public HiveGameState(){
+        //Initialize gameBoard to be 14 rows of empty tiles
         gameBoard = new ArrayList<ArrayList<Tile>>();
+        for(int i = 0; i < 14; i++){
+            gameBoard.add(new ArrayList<Tile>());
+            for(int j = 0; j < 14; j++){
+                gameBoard.get(i).add(new Tile (i*tileSize, j*tileSize, Tile.PlayerPiece.EMPTY));
+            }
+        }
+        //Initialize displayBoard to be 14 rows of empty tiles
         displayBoard = new ArrayList<ArrayList<Tile>>();
+        for(int i = 0; i < 14; i++){
+            displayBoard.add(new ArrayList<Tile>());
+            for(int j = 0; j < 14; j++){
+                displayBoard.get(i).add(new Tile (i*tileSize, j*tileSize, Tile.PlayerPiece.EMPTY));
+            }
+        }
         piecesRemain = new Tile.Bug[2][5];
         whoseTurn = Turn.PLAYER1;
     }
