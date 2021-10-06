@@ -128,6 +128,43 @@ public class HiveGameState {
     }
 
     /**
+     * Checks the hive (ie gameboard) to see if the entire board is connected and if
+     * without the Tile in the spot it currently is the board would STILL be connected
+     * @param tile the piece being checked against breaking the hive
+     * @return false if move would NOT break the hive, true if move would break hive
+     */
+    public boolean breakHive(Tile tile){
+        //perform a DFS
+        return true;
+    }
+
+    /**
+     * checks a tile to see if it is surrounded to the point
+     * where it no longer has freedom of movement
+     * Different logic due to the offest of hexes
+     * @param tile the piece being checked
+     * @return true if it is free to move, false if it is trapped
+     */
+    public boolean freedom(Tile tile){
+        int count = 0;
+
+        switch(tile.getCoordY() % 2){
+            case 0: //even row
+                //LU: (row--, col), LM: (row, col--), LD: (row++, col),
+                //RU: (row--, col++), RM: (row, col++), RD: (row++, col++)
+
+                break;
+            case 1: //odd row
+                //LU: (row--, col--), LM: (row, col--), LD: (row++, col--),
+                //RU: (row--, col), RM: (row, col++), RD: (row++, col)
+
+                break;
+        }
+
+        return true;
+    }
+
+    /**
      * Highlights the potential moves of a selected piece. The class variable potentials is
      * changed to reflect potential moves.
      * @param tile the selected piece
@@ -161,10 +198,7 @@ public class HiveGameState {
             }
 
         }
-
-
         return false;
-
     }
 
     /**
@@ -657,28 +691,6 @@ public class HiveGameState {
         }
         return false;
 
-    }
-
-    /**
-     * Checks the hive (ie gameboard) to see if the entire board is connected and if
-     * without the Tile in the spot it currently is the board would STILL be connected
-     * @param tile the piece being checked against breaking the hive
-     * @return false if move would NOT break the hive, true if move would break hive
-     */
-    public boolean breakHive(Tile tile){
-
-        return true;
-    }
-
-    /**
-     * checks a tile to see if it is surrounded to the point
-     * where it no longer has freedom of movement
-     * @param tile the piece being checked
-     * @return true if it is free to move, false if it is trapped
-     */
-    public boolean freedom(Tile tile){
-
-        return true;
     }
 
     /**
