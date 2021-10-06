@@ -99,12 +99,10 @@ public class HiveGameState {
      * Checks the spot a piece is trying to move to determine if it is
      * a valid move according to the movement rules
      * @param tile the piece that is trying to move
-     * @param xCoord the x coordinate where the piece is moving
-     * @param yCoord the y coordinate where the piece is moving
      * @return true if can move there, false if not
      */
-    public boolean validMove(Tile tile, int xCoord, int yCoord){
-        if(!breakHive(tile, xCoord, yCoord)){//as long as the move doesn't break the hive
+    public boolean validMove(Tile tile){
+        if(!breakHive(tile)){//as long as the move doesn't break the hive
             //and the type isn't grasshopper or beetle since they
             //don't obey the freedom of movement rule
             if(tile.getType() != Tile.Bug.GRASSHOPPER || tile.getType() != Tile.Bug.BEETLE){
@@ -123,11 +121,9 @@ public class HiveGameState {
      * Checks the hive (ie gameboard) to see if the entire board is connected and if
      * without the Tile in the spot it currently is the board would STILL be connected
      * @param tile the piece being checked against breaking the hive
-     * @param xCoord the x coordinate it is trying to move to (not sure if neccesary)
-     * @param yCoord the y coordinate it is trying to move to (not sure if neccesary)
      * @return false if move would NOT break the hive, true if move would break hive
      */
-    public boolean breakHive(Tile tile, int xCoord, int yCoord){
+    public boolean breakHive(Tile tile){
         //perform a DFS
         return true;
     }
@@ -140,7 +136,7 @@ public class HiveGameState {
      * @return true if it is free to move, false if it is trapped
      */
     public boolean freedom(Tile tile){
-
+        int count = 0;
 
         switch(tile.getCoordY() % 2){
             case 0: //even row
@@ -165,7 +161,7 @@ public class HiveGameState {
      * @return true if potential moves exist. false if not.
      */
     public boolean selectTile(Tile tile) {
-        if(validMove(tile, tile.getCoordX(), tile.getCoordY())) {
+        if(validMove(tile)) {
             //if the piece can be moved legally
             switch (tile.getType()){
                 case ANT:
