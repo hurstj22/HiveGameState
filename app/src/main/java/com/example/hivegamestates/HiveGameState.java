@@ -2,6 +2,7 @@ package com.example.hivegamestates;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class HiveGameState {
@@ -37,17 +38,15 @@ public class HiveGameState {
         //Initialize gameBoard to be 14 rows of empty tiles
         gameBoard = new ArrayList<ArrayList<Tile>>();
         for(int i = 0; i < 14; i++){
-            gameBoard.add(new ArrayList<Tile>());
             for(int j = 0; j < 14; j++){
-                gameBoard.get(i).add(new Tile (i, j, Tile.PlayerPiece.EMPTY));
+                gameBoard.get(i).set(j, new Tile (i, j, Tile.PlayerPiece.EMPTY));
             }
         }
-        //Initialize displayBoard to be 14 rows of empty tiles
+        //Initialize displayBoard to be mirror gameBoard
         displayBoard = new ArrayList<ArrayList<Tile>>();
         for(int i = 0; i < 14; i++){
-            displayBoard.add(new ArrayList<Tile>());
             for(int j = 0; j < 14; j++){
-                displayBoard.get(i).add(new Tile (i, j, Tile.PlayerPiece.EMPTY));
+                displayBoard.get(i).set(j, gameBoard.get(i).get(j));
             }
         }
         piecesRemain = new Tile.Bug[2][5];
@@ -60,12 +59,16 @@ public class HiveGameState {
      */
     public HiveGameState(HiveGameState other){
         this.gameBoard = new ArrayList<ArrayList<Tile>>();
-        for(int index = 0; index < gameBoard.size(); index++){
-            other.gameBoard.add(new ArrayList<Tile>(gameBoard.get(index)));
+        for (int row = 0; row < gameBoard.size(); row++){
+            for (int col = 0; col < gameBoard.get(row).size(); col++){
+                this.gameBoard.get(row).set(col, new Tile(other.gameBoard.get(row).get(col)));
+            }
         }
         this.displayBoard = new ArrayList<ArrayList<Tile>>();
-        for(int index = 0; index < displayBoard.size(); index++) {
-            other.displayBoard.add(new ArrayList<Tile>(displayBoard.get(index)));
+        for (int row = 0; row < displayBoard.size(); row++){
+            for (int col = 0; col < displayBoard.get(row).size(); col++){
+                this.displayBoard.get(row).set(col, new Tile(other.displayBoard.get(row).get(col)));
+            }
         }
         this.piecesRemain = new Tile.Bug[2][5];
         for (int i = 0; i < other.piecesRemain.length; i++){

@@ -59,11 +59,10 @@ public class Tile {
      * @param other
      * @return a new copied Tile object
      */
-    public Tile Tile(Tile other){
+    public Tile(Tile other){
         Tile tile = new Tile(other.indexX, other.indexY, other.piece);
         tile.onTopOf = other.onTopOf;
         tile.type = other.type;
-        return tile;
     }
 
     public void setType(Bug bug) {
