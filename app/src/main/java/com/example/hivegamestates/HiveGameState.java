@@ -2,7 +2,6 @@ package com.example.hivegamestates;
 
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class HiveGameState {
 
@@ -39,7 +38,7 @@ public class HiveGameState {
         for(int i = 0; i < 14; i++){
             gameBoard.add(new ArrayList<Tile>());
             for(int j = 0; j < 14; j++){
-                gameBoard.get(i).add(new Tile (i*tileSize, j*tileSize, Tile.PlayerPiece.EMPTY));
+                gameBoard.get(i).add(new Tile (i, j, Tile.PlayerPiece.EMPTY));
             }
         }
         //Initialize displayBoard to be 14 rows of empty tiles
@@ -47,7 +46,7 @@ public class HiveGameState {
         for(int i = 0; i < 14; i++){
             displayBoard.add(new ArrayList<Tile>());
             for(int j = 0; j < 14; j++){
-                displayBoard.get(i).add(new Tile (i*tileSize, j*tileSize, Tile.PlayerPiece.EMPTY));
+                displayBoard.get(i).add(new Tile (i, j, Tile.PlayerPiece.EMPTY));
             }
         }
         piecesRemain = new Tile.Bug[2][5];
@@ -148,7 +147,7 @@ public class HiveGameState {
     public boolean freedom(Tile tile){
         int count = 0;
 
-        switch(tile.getCoordY() % 2){
+        switch(tile.getIndexY() % 2){
             case 0: //even row
                 //LU: (row--, col), LM: (row, col--), LD: (row++, col),
                 //RU: (row--, col++), RM: (row, col++), RD: (row++, col++)
@@ -191,9 +190,6 @@ public class HiveGameState {
                 case EMPTY:
                     //
                     return false;
-                case POTENTIAL:
-                    //
-                    return false;
 
             }
 
@@ -210,8 +206,8 @@ public class HiveGameState {
     public boolean beetleSearch(Tile tile) {
             // Ensure any tile that the beetle touches touches another bug tile
             // before highlighting as potential
-            int x = tile.getCoordX();
-            int y = tile.getCoordY();
+            int x = tile.getIndexX();
+            int y = tile.getIndexY();
 
             if (x % 2 == 0) {
                 // For even rows
@@ -295,8 +291,8 @@ public class HiveGameState {
      */
     public boolean queenSearch(Tile tile) {
         //Ensure adjacent tiles are empty with things next to them
-        int x = tile.getCoordX();
-        int y = tile.getCoordY();
+        int x = tile.getIndexX();
+        int y = tile.getIndexY();
 
         if (x % 2 == 0) {
             // For even rows
@@ -391,8 +387,8 @@ public class HiveGameState {
      */
     public boolean startGrasshopperSearch(Tile tile) {
         //set a recursive search in each direction from the starting tile
-        int x = tile.getCoordX();
-        int y = tile.getCoordY();
+        int x = tile.getIndexX();
+        int y = tile.getIndexY();
         boolean valid = false;
 
         if ( x % 2 == 0 ) {
@@ -480,8 +476,8 @@ public class HiveGameState {
      * @return Should always return true.
      */
     public boolean grasshopperSearch(Tile tile, Direction direction) {
-        int x = tile.getCoordX();
-        int y = tile.getCoordY();
+        int x = tile.getIndexX();
+        int y = tile.getIndexY();
 
         if(x % 2 == 0) {
             //if tile is on an even row
@@ -615,40 +611,34 @@ public class HiveGameState {
     public boolean nextTo(Tile selectedTile, Tile tile) {
         if (tile.getType() == Tile.Bug.EMPTY) {
             // Assign tile coordinates to integer values for ease of handling
-            int x = tile.getCoordX();
-            int y = tile.getCoordY();
+            int x = tile.getIndexX();
+            int y = tile.getIndexY();
 
             if (x % 2 == 0) {
                 // For even rows
 
                 if(gameBoard.get(x-1).get(y).getType() != Tile.Bug.EMPTY &&
-                        gameBoard.get(x-1).get(y) != selectedTile &&
-                        gameBoard.get(x-1).get(y).getType() != Tile.Bug.POTENTIAL){
+                        gameBoard.get(x-1).get(y) != selectedTile){
                     //Check tile above left of tile
                     return true;
                 } else if(gameBoard.get(x-1).get(y+1).getType() != Tile.Bug.EMPTY &&
-                        gameBoard.get(x-1).get(y+1) != selectedTile &&
-                        gameBoard.get(x-1).get(y+1).getType() != Tile.Bug.POTENTIAL) {
+                        gameBoard.get(x-1).get(y+1) != selectedTile) {
                     //Check tile above right of tile
                     return true;
                 } else if(gameBoard.get(x).get(y-1).getType() != Tile.Bug.EMPTY &&
-                        gameBoard.get(x).get(y-1) != selectedTile &&
-                        gameBoard.get(x).get(y-1).getType() != Tile.Bug.POTENTIAL) {
+                        gameBoard.get(x).get(y-1) != selectedTile) {
                     //Check tile to the left of tile
                     return true;
                 } else if(gameBoard.get(x).get(y+1).getType() != Tile.Bug.EMPTY &&
-                        gameBoard.get(x).get(y+1) != selectedTile &&
-                        gameBoard.get(x).get(y+1).getType() != Tile.Bug.POTENTIAL) {
+                        gameBoard.get(x).get(y+1) != selectedTile) {
                     //Check tile to the right of tile
                     return true;
                 } else if(gameBoard.get(x+1).get(y).getType() != Tile.Bug.EMPTY &&
-                        gameBoard.get(x+1).get(y) != selectedTile &&
-                        gameBoard.get(x+1).get(y).getType() != Tile.Bug.POTENTIAL) {
+                        gameBoard.get(x+1).get(y) != selectedTile) {
                     //Check tile below left of tile
                     return true;
                 } else if(gameBoard.get(x+1).get(y+1).getType() != Tile.Bug.EMPTY &&
-                        gameBoard.get(x+1).get(y+1) != selectedTile &&
-                        gameBoard.get(x+1).get(y+1).getType() != Tile.Bug.POTENTIAL) {
+                        gameBoard.get(x+1).get(y+1) != selectedTile) {
                     //Check tile below right of tile
                     return true;
                 }
@@ -656,33 +646,27 @@ public class HiveGameState {
                 // For odd rows
 
                 if(gameBoard.get(x-1).get(y-1).getType() != Tile.Bug.EMPTY &&
-                        gameBoard.get(x-1).get(y-1) != selectedTile &&
-                        gameBoard.get(x-1).get(y-1).getType() != Tile.Bug.POTENTIAL){
+                        gameBoard.get(x-1).get(y-1) != selectedTile ){
                     //Check tile above left of tile
                     return true;
                 } else if(gameBoard.get(x-1).get(y).getType() != Tile.Bug.EMPTY &&
-                        gameBoard.get(x-1).get(y) != selectedTile &&
-                        gameBoard.get(x-1).get(y).getType() != Tile.Bug.POTENTIAL) {
+                        gameBoard.get(x-1).get(y) != selectedTile ) {
                     //Check tile above right of tile
                     return true;
                 } else if(gameBoard.get(x).get(y-1).getType() != Tile.Bug.EMPTY &&
-                        gameBoard.get(x).get(y-1) != selectedTile &&
-                        gameBoard.get(x).get(y-1).getType() != Tile.Bug.POTENTIAL) {
+                        gameBoard.get(x).get(y-1) != selectedTile ) {
                     //Check tile to the left of tile
                     return true;
                 } else if(gameBoard.get(x).get(y+1).getType() != Tile.Bug.EMPTY &&
-                        gameBoard.get(x).get(y+1) != selectedTile &&
-                        gameBoard.get(x).get(y+1).getType() != Tile.Bug.POTENTIAL) {
+                        gameBoard.get(x).get(y+1) != selectedTile ) {
                     //Check tile to the right of tile
                     return true;
                 } else if(gameBoard.get(x+1).get(y-1).getType() != Tile.Bug.EMPTY &&
-                        gameBoard.get(x+1).get(y-1) != selectedTile &&
-                        gameBoard.get(x+1).get(y-1).getType() != Tile.Bug.POTENTIAL) {
+                        gameBoard.get(x+1).get(y-1) != selectedTile) {
                     //Check tile below left of tile
                     return true;
                 } else if(gameBoard.get(x+1).get(y).getType() != Tile.Bug.EMPTY &&
-                        gameBoard.get(x+1).get(y) != selectedTile &&
-                        gameBoard.get(x+1).get(y).getType() != Tile.Bug.POTENTIAL) {
+                        gameBoard.get(x+1).get(y) != selectedTile) {
                     //Check tile below right of tile
                     return true;
                 }
@@ -721,9 +705,7 @@ public class HiveGameState {
                     case GRASSHOPPER:
                         currentState += tile.getPlayerPiece().name() + "G";
                         break;
-                    case POTENTIAL:
-                        currentState += tile.getPlayerPiece().name() + "P"; //add P for potential future spot
-                        break;
+
                 }
             }
         }
