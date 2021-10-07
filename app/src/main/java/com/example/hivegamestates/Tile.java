@@ -8,7 +8,6 @@ public class Tile {
 
     public enum Bug {
         EMPTY,
-        POTENTIAL,
         QUEEN_BEE,
         BEETLE,
         ANT,
@@ -26,8 +25,8 @@ public class Tile {
     private Bug type;
     private Tile onTopOf;
     private PlayerPiece piece;
-    private int coordX; //integer index in the arrayList of tiles
-    private int coordY;
+    private int indexX; //integer index in the arrayList of tiles
+    private int indexY;
 
     /**
      * Makes a default constructor for a tile
@@ -38,8 +37,8 @@ public class Tile {
         //default constructor could make a null tile
         type = Bug.EMPTY;
         onTopOf = null;
-        coordX = x;
-        coordY = y;
+        indexX = x;
+        indexY = y;
         this.piece = piece;
     }
 
@@ -51,8 +50,8 @@ public class Tile {
     public Tile(Bug bug, Tile tile, int x, int y) {
         type = bug;
         onTopOf = tile.onTopOf;
-        coordX = x;
-        coordY = y;
+        indexX = x;
+        indexY = y;
     }
 
     /**
@@ -61,7 +60,7 @@ public class Tile {
      * @return a new copied Tile object
      */
     public Tile Tile(Tile other){
-        Tile tile = new Tile(other.coordX, other.coordY, other.piece);
+        Tile tile = new Tile(other.indexX, other.indexY, other.piece);
         tile.onTopOf = other.onTopOf;
         tile.type = other.type;
 
@@ -76,16 +75,16 @@ public class Tile {
         onTopOf = tile;
     }
 
-    public void setCoordX(int coordX) {
-        this.coordX = coordX;
+    public void setIndexX(int x) {
+        indexX = x;
     }
-    public int getCoordX() {
-        return coordX;
+    public void setIndexY(int y ) {indexY = y; }
+    public int getIndexX() {
+        return indexX;
     }
-    public int getCoordY() {
-        return coordY;
+    public int getIndexY() {
+        return indexY;
     }
-
     public Bug getType() {
         return type;
     }
