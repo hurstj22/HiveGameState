@@ -63,7 +63,6 @@ public class Tile {
         Tile tile = new Tile(other.indexX, other.indexY, other.piece);
         tile.onTopOf = other.onTopOf;
         tile.type = other.type;
-
         return tile;
     }
 

@@ -848,11 +848,33 @@ public class HiveGameState {
     public boolean makeMove(Tile moveTile, int newXCoord, int newYCoord) {
         //need to get position of newTile based on x and y coordinates
         int[] newTileCords = positionOfTile(newXCoord, newYCoord);
+
+        //hold old Position
+        int[] oldTileCords = new int[2];
+        oldTileCords[0] = moveTile.getIndexX();
+        oldTileCords[1] = moveTile.getIndexY();
+
+        //if potentialMoves holds tile at newPosition then swap
         if(potentialMoves.contains(gameBoard.get(newTileCords[0]).get(newTileCords[1]))){
-            //put tile moveTile in new location and update coordinates
-            // and put empty tile in old spot
+
+            //assign newIndexes to move Tile
+            moveTile.setIndexX(newTileCords[0]);
+            moveTile.setIndexY(newTileCords[1]);
+
+            //not on top of something so make new empty till
+            if(moveTile.getOnTopOf() == null){
+                gameBoard.get(newTileCords[0]).set(newTileCords[1], moveTile);
+                Tile emptyTile = new Tile(oldTileCords[0], oldTileCords[1], Tile.PlayerPiece.EMPTY);
+                gameBoard.get(oldTileCords[0]).set(oldTileCords[1], emptyTile);
+            }
+
+            //on top of something so don't make new empty tile
+            else{
+                gameBoard.get(newTileCords[0]).set(newTileCords[1], moveTile);
+            }
+            return true;
         }
-        return true;
+        return false;
     }
 
     public int[] positionOfTile(int xCord, int yCord){
@@ -860,7 +882,7 @@ public class HiveGameState {
         int[] positionInGameBoard = new int[2];
         positionInGameBoard[0] = (yCord/tileSize) -1;
         if (positionInGameBoard[0] % 2 == 0){ //even row
-            positionInGameBoard[1] = (int) (xCord/(1.5*tileSize));
+            positionInGameBoard[1] = (int) ((xCord/(1.5*tileSize)) - 1);
         }
         else{ //odd row
             positionInGameBoard[1] = xCord/tileSize;
