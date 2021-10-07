@@ -27,6 +27,7 @@ public class Tile {
     private PlayerPiece piece;
     private int indexX; //integer index in the arrayList of tiles
     private int indexY;
+    private boolean visited; //variable for the DFS
 
     /**
      * Makes a default constructor for a tile
@@ -40,6 +41,7 @@ public class Tile {
         indexX = x;
         indexY = y;
         this.piece = piece;
+        visited  = false;
     }
 
     /**
@@ -63,6 +65,7 @@ public class Tile {
         Tile tile = new Tile(other.indexX, other.indexY, other.piece);
         tile.onTopOf = other.onTopOf;
         tile.type = other.type;
+        tile.visited = other.visited;
     }
 
     public void setType(Bug bug) {

@@ -137,8 +137,39 @@ public class HiveGameState {
      * @return false if move would NOT break the hive, true if move would break hive
      */
     public boolean breakHive(Tile tile){
-        //perform a DFS on tile
+        int row = -1;
+        int col = -1;
+        boolean firstFound = false;
+
+        //perform a DFS on the gameBoard
+        //copy the old gameBoard into a new temporary board to perform dfs on
+        ArrayList<ArrayList<Tile>> testBoard = new ArrayList<ArrayList<Tile>>();
+        for(int i = 0; i < gameBoard.size(); i++){
+            for(int j = 0; j < gameBoard.size(); j++){
+                if(i == tile.getIndexX() && j == tile.getIndexY()){
+                    testBoard.get(i).set(j, new Tile(i, j, Tile.PlayerPiece.EMPTY)); //take out the tile in question
+                }
+                else{
+                    testBoard.get(i).set(j, new Tile (gameBoard.get(i).get(j)));
+                }
+                //update the row and col of the first position where the row and col aren't empty
+                //for use in the dfs
+                if(!firstFound && testBoard.get(i).get(j).getType() != Tile.Bug.EMPTY){
+                    row = i;
+                    col = j;
+                    firstFound = true;
+                }
+            }
+        }
+
+        if(row + col > -2){ //if the board isn't empty, run dfs
+            dfs(row, col, testBoard);
+        }
         return false;
+    }
+
+    public void dfs(int row, int col, ArrayList<ArrayList<Tile>> board){
+        
     }
 
     /**
