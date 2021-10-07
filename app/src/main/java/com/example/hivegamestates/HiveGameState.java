@@ -55,7 +55,7 @@ public class HiveGameState {
 
     /**
      * Deep copy constructor.
-     * @param other
+     * @param other returns a copy of the current gameState
      */
     public HiveGameState(HiveGameState other){
         this.gameBoard = new ArrayList<ArrayList<Tile>>();
@@ -81,7 +81,7 @@ public class HiveGameState {
     /**
      * Creates a new gamestate object and
      * is called when the new game button is clicked
-     * @return
+     * @return true if successfully created a new blank gameState
      */
     public boolean newGame(){
         new HiveGameState(); //creates a new blank gameState object
@@ -91,7 +91,7 @@ public class HiveGameState {
     /**
      * Exits the game,
      * called when the exit game button is clicked
-     * @return
+     * @return true in order to exit the game
      */
     public boolean endGame(){
         return true;
@@ -101,7 +101,7 @@ public class HiveGameState {
      * Takes in the previous gamestate
      * and sets the current gameState equal to it
      * using deep copy constructor
-     * @return
+     * @return true if the gameState becomes the previous gameState
      */
     public boolean undoMove(HiveGameState previousGameState){
         new HiveGameState(previousGameState);
@@ -842,11 +842,11 @@ public class HiveGameState {
     }
 
     /**
-     *
-     * @param moveTile
-     * @param newXCoord
-     * @param newYCoord
-     * @return
+     * Move the tile from one spot to a new destination, (swaps tiles)
+     * @param moveTile the old tile moving
+     * @param newXCoord the new y coordinates the old tile will go
+     * @param newYCoord the new x coordinates the old tile will go
+     * @return a boolean, true if it successfully moved, false if the tile failed to move
      */
     public boolean makeMove(Tile moveTile, int newXCoord, int newYCoord) {
         //need to get position of newTile based on x and y coordinates
@@ -880,6 +880,12 @@ public class HiveGameState {
         return false;
     }
 
+    /**
+     * A helper function to determine the indices given points on the gameboard
+     * @param xCord the x coordinate on the board
+     * @param yCord the y coordinate on the board
+     * @return the index in the array that point on the board belongs to as a pair of indices
+     */
     public int[] positionOfTile(int xCord, int yCord){
         //holds row and col value of tile
         int[] positionInGameBoard = new int[2];
