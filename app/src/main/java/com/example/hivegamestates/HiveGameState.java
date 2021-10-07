@@ -134,7 +134,7 @@ public class HiveGameState {
      * @return false if move would NOT break the hive, true if move would break hive
      */
     public boolean breakHive(Tile tile){
-        //perform a DFS
+        //perform a DFS on tile
         return true;
     }
 
@@ -147,20 +147,145 @@ public class HiveGameState {
      */
     public boolean freedom(Tile tile){
         int count = 0;
+        int sum = 0;
+        //boolean values to keep track of which tiles were found to be occupied
+        boolean LU = false;
+        boolean LM = false;
+        boolean LD = false;
+        boolean RU = false;
+        boolean RM = false;
+        boolean RD = false;
 
-        switch(tile.getCoordY() % 2){
+        int x = tile.getCoordX();
+        int y = tile.getCoordY();
+
+        switch(tile.getCoordY() % 2) {
             case 0: //even row
                 //LU: (row--, col), LM: (row, col--), LD: (row++, col),
                 //RU: (row--, col++), RM: (row, col++), RD: (row++, col++)
 
-                break;
+                //Check tile above left of tile
+                if (gameBoard.get(x - 1).get(y).getType() != Tile.Bug.EMPTY) {
+                    count++;
+                    LU = true;
+                    sum += (x - 1) + y;
+                }
+                //Check tile above right of tile
+                if (gameBoard.get(x - 1).get(y + 1).getType() != Tile.Bug.EMPTY) {
+                    count++;
+                    RU = true;
+                    sum += (x - 1) + (y + 1);
+                }
+                // Check tile to the left of tile
+                if (gameBoard.get(x).get(y - 1).getType() != Tile.Bug.EMPTY) {
+                    count++;
+                    LM = true;
+                    sum += x + (y - 1);
+                }
+                // Check tile to the right of tile
+                if (gameBoard.get(x).get(y + 1).getType() != Tile.Bug.EMPTY) {
+                    count++;
+                    RM = true;
+                    sum += x + (y + 1);
+                }
+              //Check tile below left of tile
+                if (gameBoard.get(x + 1).get(y).getType() != Tile.Bug.EMPTY) {
+                    count++;
+                    LD = true;
+                    sum += (x + 1) + y;
+                }
+                // Check tile below right of tile
+                if (gameBoard.get(x + 1).get(y + 1).getType() != Tile.Bug.EMPTY) {
+                    count++;
+                    RD = true;
+                    sum += (x + 1) + (y + 1);
+                }
+
+                if(count >= 5) { //piece is surrounded
+                    return false;
+                }
+                else if(count >= 4){
+                    //did some fancy math to find
+                    // if the sum is odd of all the indices of the tiles connected to
+                    //the tile of interest than it isn't blocked
+                    if(sum % 2 == 1){
+                        return true;
+                    }
+                    else if((sum % 2 == 0) && !LM){ //this is the exception case to the rule above
+                        return true;
+                    }
+                    else{ //all other cases when the count is 4 or greater the tile is surrounded
+                        return false;
+                    }
+                }
+                else{ //count is less than 4 so not surrounded, thus good to go!
+                    return true;
+                }
+                //end of even case
+
             case 1: //odd row
                 //LU: (row--, col--), LM: (row, col--), LD: (row++, col--),
                 //RU: (row--, col), RM: (row, col++), RD: (row++, col)
 
-                break;
-        }
+                //Check tile above left of tile
+                if (gameBoard.get(x-1).get(y-1).getType() != Tile.Bug.EMPTY) {
+                    count++;
+                    LU = true;
+                    sum += (x - 1) + (y - 1);
+                }
+                //Check tile above right of tile
+                if (gameBoard.get(x - 1).get(y).getType() != Tile.Bug.EMPTY) {
+                    count++;
+                    RU = true;
+                    sum += (x - 1) + y;
+                }
+                // Check tile to the left of tile
+                if (gameBoard.get(x).get(y - 1).getType() != Tile.Bug.EMPTY) {
+                    count++;
+                    LM = true;
+                    sum += x + (y - 1);
+                }
+                // Check tile to the right of tile
+                if (gameBoard.get(x).get(y + 1).getType() != Tile.Bug.EMPTY) {
+                    count++;
+                    RM = true;
+                    sum += x + (y + 1);
+                }
+                //Check tile below left of tile
+                if (gameBoard.get(x + 1).get(y - 1).getType() != Tile.Bug.EMPTY) {
+                    count++;
+                    LD = true;
+                    sum += (x + 1) + (y - 1);
+                }
+                // Check tile below right of tile
+                if (gameBoard.get(x + 1).get(y).getType() != Tile.Bug.EMPTY) {
+                    count++;
+                    RD = true;
+                    sum += (x + 1) + y;
+                }
 
+                if(count >= 5) { //piece is surrounded
+                    return false;
+                }
+                else if(count >= 4){
+                    //did some fancy math to find
+                    // if the sum is odd of all the indices of the tiles connected to
+                    //the tile of interest than it isn't blocked
+                    if(sum % 2 == 1){
+                        return true;
+                    }
+                    else if((sum % 2 == 0) && !RM){ //this is the exception case to the rule above
+                        return true;
+                    }
+                    else{ //all other cases when the count is 4 or greater the tile is surrounded
+                        return false;
+                    }
+                }
+                else{ //count is less than 4 so not surrounded, thus good to go!
+                    return true;
+                }
+                //end of odd case
+        }
         return true;
     }
 
@@ -721,9 +846,9 @@ public class HiveGameState {
                     case GRASSHOPPER:
                         currentState += tile.getPlayerPiece().name() + "G";
                         break;
-                    case POTENTIAL:
-                        currentState += tile.getPlayerPiece().name() + "P"; //add P for potential future spot
-                        break;
+                    //case POTENTIAL:
+                    //    currentState += tile.getPlayerPiece().name() + "P"; //add P for potential future spot
+                    //    break;
                 }
             }
         }
