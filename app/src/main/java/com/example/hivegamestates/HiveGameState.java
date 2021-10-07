@@ -848,7 +848,6 @@ public class HiveGameState {
     public boolean makeMove(Tile moveTile, int newXCoord, int newYCoord) {
         //need to get position of newTile based on x and y coordinates
         int[] newTileCords = positionOfTile(newXCoord, newYCoord);
-
         if(potentialMoves.contains(gameBoard.get(newTileCords[0]).get(newTileCords[1]))){
             //put tile moveTile in new location and update coordinates
             // and put empty tile in old spot
@@ -857,10 +856,15 @@ public class HiveGameState {
     }
 
     public int[] positionOfTile(int xCord, int yCord){
+        //holds row and col value of tile
         int[] positionInGameBoard = new int[2];
-        positionInGameBoard[0] = xCord/tileSize;
-        positionInGameBoard[1] = yCord/tileSize;
+        positionInGameBoard[0] = (yCord/tileSize) -1;
+        if (positionInGameBoard[0] % 2 == 0){ //even row
+            positionInGameBoard[1] = (int) (xCord/(1.5*tileSize));
+        }
+        else{ //odd row
+            positionInGameBoard[1] = xCord/tileSize;
+        }
         return positionInGameBoard;
     }
-
 }
