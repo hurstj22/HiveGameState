@@ -730,4 +730,29 @@ public class HiveGameState {
         return currentState;
     }
 
+    /**
+     *
+     * @param moveTile
+     * @param newXCoord
+     * @param newYCoord
+     * @return
+     */
+    public boolean makeMove(Tile moveTile, int newXCoord, int newYCoord) {
+        //need to get position of newTile based on x and y coordinates
+        int[] newTileCords = positionOfTile(newXCoord, newYCoord);
+
+        if(potentialMoves.contains(gameBoard.get(newTileCords[0]).get(newTileCords[1]))){
+            //put tile moveTile in new location and update coordinates
+            // and put empty tile in old spot
+        }
+        return true;
+    }
+
+    public int[] positionOfTile(int xCord, int yCord){
+        int[] positionInGameBoard = new int[2];
+        positionInGameBoard[0] = xCord/tileSize;
+        positionInGameBoard[1] = yCord/tileSize;
+        return positionInGameBoard;
+    }
+
 }
