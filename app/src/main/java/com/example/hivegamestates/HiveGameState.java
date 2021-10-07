@@ -135,7 +135,7 @@ public class HiveGameState {
      */
     public boolean breakHive(Tile tile){
         //perform a DFS on tile
-        return true;
+        return false;
     }
 
     /**
