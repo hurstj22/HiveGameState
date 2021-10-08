@@ -37,16 +37,22 @@ public class HiveGameState {
     public HiveGameState(){
         //Initialize gameBoard to be 14 rows of empty tiles
         gameBoard = new ArrayList<ArrayList<Tile>>();
+        for(int i=0; i < 14; i++) {
+            gameBoard.add(new ArrayList<Tile>(14));
+        }
         for(int i = 0; i < 14; i++){
             for(int j = 0; j < 14; j++){
-                gameBoard.get(i).set(j, new Tile (i, j, Tile.PlayerPiece.EMPTY));
+                gameBoard.get(i).add(j, new Tile (i, j, Tile.PlayerPiece.EMPTY));
             }
         }
         //Initialize displayBoard to be mirror gameBoard
         displayBoard = new ArrayList<ArrayList<Tile>>();
+        for(int i=0; i < 14; i++) {
+            displayBoard.add(new ArrayList<Tile>(14));
+        }
         for(int i = 0; i < 14; i++){
             for(int j = 0; j < 14; j++){
-                displayBoard.get(i).set(j, gameBoard.get(i).get(j));
+                displayBoard.get(i).add(j, gameBoard.get(i).get(j));
             }
         }
         piecesRemain = new Tile.Bug[2][5];
@@ -59,21 +65,30 @@ public class HiveGameState {
      */
     public HiveGameState(HiveGameState other){
         this.gameBoard = new ArrayList<ArrayList<Tile>>();
-        for (int row = 0; row < gameBoard.size(); row++){
-            for (int col = 0; col < gameBoard.get(row).size(); col++){
-                this.gameBoard.get(row).set(col, new Tile(other.gameBoard.get(row).get(col)));
+        for(int i=0; i < 14; i++) {
+            this.gameBoard.add(new ArrayList<Tile>(14));
+        }
+
+        for (int row = 0; row < 14; row++){
+            for (int col = 0; col < 14; col++){
+                Tile copyTile = new Tile(other.getGameBoard().get(row).get(col).getType(), other.getGameBoard().get(row).get(col), row, col);
+                this.gameBoard.get(row).add(col, copyTile);
             }
         }
         this.displayBoard = new ArrayList<ArrayList<Tile>>();
-        for (int row = 0; row < displayBoard.size(); row++){
-            for (int col = 0; col < displayBoard.get(row).size(); col++){
-                this.displayBoard.get(row).set(col, new Tile(other.displayBoard.get(row).get(col)));
+        for(int i=0; i < 14; i++) {
+            this.displayBoard.add(new ArrayList<Tile>(14));
+        }
+        for (int row = 0; row < 14; row++){
+            for (int col = 0; col < 14; col++){
+                Tile copyTile = new Tile(other.getGameBoard().get(row).get(col).getType(), other.getGameBoard().get(row).get(col), row, col);
+                this.displayBoard.get(row).add(col, copyTile);
             }
         }
         this.piecesRemain = new Tile.Bug[2][5];
-        for (int i = 0; i < other.piecesRemain.length; i++){
-            for (int j = 0; j < other.piecesRemain[i].length; j++){
-                this.piecesRemain[i][j] = other.piecesRemain[i][j];
+        for (int i = 0; i < other.getPiecesRemain().length; i++){
+            for (int j = 0; j < other.getPiecesRemain()[i].length; j++){
+                this.piecesRemain[i][j] = other.getPiecesRemain()[i][j];
             }
         }
     }
@@ -817,7 +832,7 @@ public class HiveGameState {
             for (Tile tile : row) {
                 switch (tile.getType()) {
                     case EMPTY:
-                        currentState += " "; //add space for nothing there
+                        currentState += "*"; //add space for nothing there
                         break;
                     case QUEEN_BEE:
                         currentState += tile.getPlayerPiece().name() + "Q";
@@ -837,6 +852,7 @@ public class HiveGameState {
 
                 }
             }
+            currentState += "\n";
         }
         return currentState;
     }
@@ -907,4 +923,17 @@ public class HiveGameState {
     public Tile getTile(int x, int y){
         return gameBoard.get(x).get(y);
     }
+
+    public ArrayList<ArrayList<Tile>> getGameBoard(){
+        return gameBoard;
+    }
+
+    public ArrayList<ArrayList<Tile>> getDisplayBoard(){
+        return displayBoard;
+    }
+
+    public Tile.Bug[][] getPiecesRemain(){
+        return piecesRemain;
+    }
+
 }

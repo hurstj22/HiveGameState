@@ -9,16 +9,26 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    EditText output = findViewById(R.id.editText);
-    Button runTest = findViewById(R.id.runTestButton);
-    //making firstInstance of gameState
-    HiveGameState firstInstance = new HiveGameState();
+
     int counter = 0;
+    HiveGameState firstInstance;
+    HiveGameState secondInstance;
+    HiveGameState thirdInstance;
+    TextView output;
+    Button runTest;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        output = (TextView) findViewById(R.id.editText);
+        runTest = (Button) findViewById(R.id.runTestButton);
+
+        //making firstInstance of gameState
+        firstInstance = new HiveGameState();
+
         runTest.setOnClickListener((View.OnClickListener) this);
     }
 
@@ -34,15 +44,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 view.invalidate();
                 break;
             case 2: //make the second instance, display the first
-                HiveGameState secondInstance = new HiveGameState(firstInstance);
+                secondInstance = new HiveGameState(firstInstance);
                 output.setText(firstInstance.toString(), TextView.BufferType.EDITABLE);
                 view.invalidate();
                 break;
 
-            case 3: //move the tiles
+            case 3: //move the white beetle
                 firstInstance.makeMove(firstInstance.getTile(2, 3), 2, 2);
                 output.setText(firstInstance.toString(), TextView.BufferType.EDITABLE);
-                //third instance goes where qutations go
+                view.invalidate();
+                break;
+            case 4: //move the black grasshopper
+                firstInstance.makeMove(firstInstance.getTile(3, 4), 1, 4);
+                output.setText(firstInstance.toString(), TextView.BufferType.EDITABLE);
+                view.invalidate();
+                break;
+            case 5: //move the white bee
+                firstInstance.makeMove(firstInstance.getTile(2, 4), 3, 4);
+                output.setText(firstInstance.toString(), TextView.BufferType.EDITABLE);
+                view.invalidate();
+                break;
+            case 6: //copy the second instance and print the second and third showing they are equal
+                thirdInstance = new HiveGameState(secondInstance);
+                output.setText(secondInstance.toString() + "\nThird Instance: \n" + thirdInstance.toString(), TextView.BufferType.EDITABLE);
+                view.invalidate();
                 break;
         }
 
@@ -54,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (int i = 2; i < 4; i++) {
             for (int j = 3; j < 6; j++) {
                 if (i == 2) {
-                    Tile blackTile = new Tile(i, j, Tile.PlayerPiece.BLACK);
+                    Tile blackTile = new Tile(i, j, Tile.PlayerPiece.B);
                     if (j == 3) {
                         blackTile.setType(Tile.Bug.BEETLE);
                     } else if (j == 4) {
@@ -64,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     firstInstance.addTile(blackTile);
                 } else {
-                    Tile whiteTile = new Tile(i, j, Tile.PlayerPiece.WHITE);
+                    Tile whiteTile = new Tile(i, j, Tile.PlayerPiece.W);
                     if (j == 3) {
                         whiteTile.setType(Tile.Bug.BEETLE);
                     } else if (j == 4) {
