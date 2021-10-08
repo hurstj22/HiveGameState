@@ -6,10 +6,8 @@ import android.graphics.Path;
 
 public class Tile {
 
-
-    public enum Piece {
+    public enum Bug {
         EMPTY,
-        POTENTIAL,
         QUEEN_BEE,
         BEETLE,
         ANT,
@@ -24,11 +22,11 @@ public class Tile {
     }
 
     // Class Variables
-    private Piece type;
+    private Bug type;
     private Tile onTopOf;
     private PlayerPiece piece;
-    private int coordX; //integer index in the arrayList of tiles
-    private int coordY;
+    private int indexX; //integer index in the arrayList of tiles
+    private int indexY;
 
     /**
      * Makes a default constructor for a tile
@@ -37,24 +35,23 @@ public class Tile {
      */
     public Tile(int x, int y, PlayerPiece piece) {
         //default constructor could make a null tile
-        type = Piece.EMPTY;
+        type = Bug.EMPTY;
         onTopOf = null;
-        coordX = x;
-        coordY = y;
+        indexX = x;
+        indexY = y;
         this.piece = piece;
     }
 
     /**
      *
-     * @param piece which type of piece is getting copied
+     * @param bug which type of piece is getting copied
      * @param tile
      */
-    public Tile(Piece piece, Tile tile, int x, int y, PlayerPiece p) {
-        type = piece;
+    public Tile(Bug bug, Tile tile, int x, int y) {
+        type = bug;
         onTopOf = tile.onTopOf;
-        coordX = x;
-        coordY = y;
-        this.piece = p;
+        indexX = x;
+        indexY = y;
     }
 
     /**
@@ -62,23 +59,31 @@ public class Tile {
      * @param other
      * @return a new copied Tile object
      */
-    public Tile Tile(Tile other){
-        Tile tile = new Tile(other.coordX, other.coordY, other.piece);
+    public Tile(Tile other){
+        Tile tile = new Tile(other.indexX, other.indexY, other.piece);
         tile.onTopOf = other.onTopOf;
         tile.type = other.type;
-
-        return tile;
     }
 
-    public void setType(Piece piece) {
-        type = piece;
+    public void setType(Bug bug) {
+        type = bug;
     }
 
     public void setOnTopOf(Tile tile) {
         onTopOf = tile;
     }
 
-    public Piece getType() {
+    public void setIndexX(int x) {
+        indexX = x;
+    }
+    public void setIndexY(int y ) {indexY = y; }
+    public int getIndexX() {
+        return indexX;
+    }
+    public int getIndexY() {
+        return indexY;
+    }
+    public Bug getType() {
         return type;
     }
 
@@ -86,9 +91,12 @@ public class Tile {
         return onTopOf;
     }
 
-    public PlayerPiece getPiece(){
+    public PlayerPiece getPlayerPiece(){
         return piece;
     }
+
+
+
 
     /**
      * Method for drawing hexagon.

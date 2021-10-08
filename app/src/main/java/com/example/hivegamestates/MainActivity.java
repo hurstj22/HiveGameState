@@ -8,16 +8,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-    EditText output = findViewById(R.id.textedit);
-    Button runTest = findViewById(R.id.running);
-    //global declarations
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    EditText output = findViewById(R.id.editText);
+    Button runTest = findViewById(R.id.runTestButton);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
 
         runTest.setOnClickListener((View.OnClickListener)this);
@@ -31,9 +29,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         output.setText("", TextView.BufferType.EDITABLE);
-        //first instantance goes where qutations go
+        //first instance goes where qutations go
 
         output.setText("", TextView.BufferType.EDITABLE);
-        //second instantance goes where qutations go
+        //second instance goes where qutations go
     }
 }
