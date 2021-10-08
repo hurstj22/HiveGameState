@@ -16,26 +16,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-        runTest.setOnClickListener((View.OnClickListener)this);
-
-    }
-
-    @Override
-    public void onClick(View view) {
-
-        output.setText("", TextView.BufferType.EDITABLE);
-
-
-        output.setText("", TextView.BufferType.EDITABLE);
-        //first instance goes where qutations go
-
-        output.setText("", TextView.BufferType.EDITABLE);
-        //second instance goes where qutations go
-        //making firstInstance of gameState
-        HiveGameState firstInstance = new HiveGameState();
         //to help us adding some starting tiles... I defintely made that more complicated than it had to be
+        HiveGameState firstInstance = new HiveGameState();
         for(int i = 2; i < 4; i++){
             for(int j = 3; j < 6; j++){
                 if(i == 2){
@@ -66,6 +48,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }
+        runTest.setOnClickListener((View.OnClickListener)this);
+    }
 
+    @Override
+    public void onClick(View view) {
+
+        output.setText("", TextView.BufferType.EDITABLE);
+
+
+        output.setText("", TextView.BufferType.EDITABLE);
+        //first instance goes where qutations go
+
+        output.setText("", TextView.BufferType.EDITABLE);
+        //second instance goes where qutations go
+        //making firstInstance of gameState
     }
 }
