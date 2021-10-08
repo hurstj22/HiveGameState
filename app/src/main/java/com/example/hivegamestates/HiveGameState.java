@@ -898,4 +898,8 @@ public class HiveGameState {
         }
         return positionInGameBoard;
     }
+
+    public void addTile(Tile newTile){
+        gameBoard.get(newTile.getIndexX()).set(newTile.getIndexY(), newTile);
+    }
 }
