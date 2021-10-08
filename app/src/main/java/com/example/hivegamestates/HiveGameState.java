@@ -844,13 +844,14 @@ public class HiveGameState {
     /**
      * Move the tile from one spot to a new destination, (swaps tiles)
      * @param moveTile the old tile moving
-     * @param newXCoord the new y coordinates the old tile will go
-     * @param newYCoord the new x coordinates the old tile will go
+     * @param newXIndex the new y coordinates the old tile will go
+     * @param newYIndex the new x coordinates the old tile will go
      * @return a boolean, true if it successfully moved, false if the tile failed to move
      */
-    public boolean makeMove(Tile moveTile, int newXCoord, int newYCoord) {
+    public boolean makeMove(Tile moveTile, int newXIndex, int newYIndex) {
+        // commented out coordinate things for testing purposes so we can pass in indexes
         //need to get position of newTile based on x and y coordinates
-        int[] newTileCords = positionOfTile(newXCoord, newYCoord);
+        //int[] newTileCords = positionOfTile(newXCoord, newYCoord);
 
         //hold old Position
         int[] oldTileCords = new int[2];
@@ -858,26 +859,25 @@ public class HiveGameState {
         oldTileCords[1] = moveTile.getIndexY();
 
         //if potentialMoves holds tile at newPosition then swap
-        if(potentialMoves.contains(gameBoard.get(newTileCords[0]).get(newTileCords[1]))){
+        //if(potentialMoves.contains(gameBoard.get(newXIndex).get(newYIndex))){
 
-            //assign newIndexes to move Tile
-            moveTile.setIndexX(newTileCords[0]);
-            moveTile.setIndexY(newTileCords[1]);
+        //assign newIndexes to move Tile
+        moveTile.setIndexX(newXIndex);
+        moveTile.setIndexY(newYIndex);
 
             //not on top of something so make new empty till
-            if(moveTile.getOnTopOf() == null){
-                gameBoard.get(newTileCords[0]).set(newTileCords[1], moveTile);
-                Tile emptyTile = new Tile(oldTileCords[0], oldTileCords[1], Tile.PlayerPiece.EMPTY);
-                gameBoard.get(oldTileCords[0]).set(oldTileCords[1], emptyTile);
-            }
+        if(moveTile.getOnTopOf() == null){
+            gameBoard.get(newXIndex).set(newYIndex, moveTile);
+            Tile emptyTile = new Tile(oldTileCords[0], oldTileCords[1], Tile.PlayerPiece.EMPTY);
+            gameBoard.get(oldTileCords[0]).set(oldTileCords[1], emptyTile);
+        }
 
             //on top of something so don't make new empty tile
-            else{
-                gameBoard.get(newTileCords[0]).set(newTileCords[1], moveTile);
-            }
-            return true;
+        else{
+            gameBoard.get(newXIndex).set(newYIndex, moveTile);
         }
-        return false;
+        return true;
+       // return false;
     }
 
     /**

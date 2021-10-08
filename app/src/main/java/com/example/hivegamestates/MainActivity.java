@@ -13,26 +13,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button runTest = findViewById(R.id.runTestButton);
     //making firstInstance of gameState
     HiveGameState firstInstance = new HiveGameState();
+    int counter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         runTest.setOnClickListener((View.OnClickListener) this);
-
-        setFirstInstance(); //creates the first test case
     }
 
     @Override
     public void onClick(View view) {
-
-        output.setText(firstInstance.toString(), TextView.BufferType.EDITABLE);
-
+        counter++;
         output.setText("", TextView.BufferType.EDITABLE);
-        //first instance goes where qutations go
 
-        output.setText("", TextView.BufferType.EDITABLE);
-        //second instance goes where qutations go
+        switch(counter) {
+            case 1: //make the first instance, don't display
+                setFirstInstance();
+                //output.setText(firstInstance.toString(), TextView.BufferType.EDITABLE);
+                view.invalidate();
+                break;
+            case 2: //make the second instance, display the first
+                HiveGameState secondInstance = new HiveGameState(firstInstance);
+                output.setText(firstInstance.toString(), TextView.BufferType.EDITABLE);
+                view.invalidate();
+                break;
+
+            case 3: //move the tiles
+                firstInstance.makeMove()
+                output.setText("", TextView.BufferType.EDITABLE);
+                //third instance goes where qutations go
+                break;
+        }
 
     }
 
@@ -43,9 +55,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             for (int j = 3; j < 6; j++) {
                 if (i == 2) {
                     Tile blackTile = new Tile(i, j, Tile.PlayerPiece.BLACK);
-                    if (j == 0) {
+                    if (j == 3) {
                         blackTile.setType(Tile.Bug.BEETLE);
-                    } else if (j == 1) {
+                    } else if (j == 4) {
                         blackTile.setType(Tile.Bug.GRASSHOPPER);
                     } else {
                         blackTile.setType(Tile.Bug.QUEEN_BEE);
@@ -53,9 +65,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     firstInstance.addTile(blackTile);
                 } else {
                     Tile whiteTile = new Tile(i, j, Tile.PlayerPiece.WHITE);
-                    if (j == 0) {
+                    if (j == 3) {
                         whiteTile.setType(Tile.Bug.BEETLE);
-                    } else if (j == 1) {
+                    } else if (j == 4) {
                         whiteTile.setType(Tile.Bug.GRASSHOPPER);
                     } else {
                         whiteTile.setType(Tile.Bug.QUEEN_BEE);
