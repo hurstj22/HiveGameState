@@ -71,7 +71,7 @@ public class HiveGameState {
 
         for (int row = 0; row < 14; row++){
             for (int col = 0; col < 14; col++){
-                Tile copyTile = new Tile(other.getGameBoard().get(row).get(col).getType(), other.getGameBoard().get(row).get(col), row, col);
+                Tile copyTile = new Tile(other.gameBoard.get(row).get(col));
                 this.gameBoard.get(row).add(col, copyTile);
             }
         }
@@ -81,7 +81,7 @@ public class HiveGameState {
         }
         for (int row = 0; row < 14; row++){
             for (int col = 0; col < 14; col++){
-                Tile copyTile = new Tile(other.getGameBoard().get(row).get(col).getType(), other.getGameBoard().get(row).get(col), row, col);
+                Tile copyTile = new Tile(other.displayBoard.get(row).get(col));
                 this.displayBoard.get(row).add(col, copyTile);
             }
         }
