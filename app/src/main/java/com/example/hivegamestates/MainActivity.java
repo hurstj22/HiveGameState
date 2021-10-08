@@ -40,8 +40,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case 3: //move the tiles
-                firstInstance.makeMove()
-                output.setText("", TextView.BufferType.EDITABLE);
+                firstInstance.makeMove(firstInstance.getTile(2, 3), 2, 2);
+                output.setText(firstInstance.toString(), TextView.BufferType.EDITABLE);
                 //third instance goes where qutations go
                 break;
         }

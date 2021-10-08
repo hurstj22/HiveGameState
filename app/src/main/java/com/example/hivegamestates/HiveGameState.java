@@ -899,7 +899,12 @@ public class HiveGameState {
         return positionInGameBoard;
     }
 
+    //testing classes for playing Oracle
     public void addTile(Tile newTile){
         gameBoard.get(newTile.getIndexX()).set(newTile.getIndexY(), newTile);
+    }
+
+    public Tile getTile(int x, int y){
+        return gameBoard.get(x).get(y);
     }
 }
