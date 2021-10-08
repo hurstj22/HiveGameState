@@ -39,7 +39,7 @@ public class HiveGameState {
         gameBoard = new ArrayList<ArrayList<Tile>>();
         for(int i = 0; i < 14; i++){
             for(int j = 0; j < 14; j++){
-                gameBoard.get(i).set(j, new Tile (i, j, Tile.PlayerPiece.EMPTY));
+                gameBoard.get(i).add(j, new Tile (i, j, Tile.PlayerPiece.EMPTY));
             }
         }
         //Initialize displayBoard to be mirror gameBoard
