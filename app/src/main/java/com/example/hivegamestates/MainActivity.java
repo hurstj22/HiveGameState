@@ -29,9 +29,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         output.setText("", TextView.BufferType.EDITABLE);
-        //first instance goes where qutations go
+        //first instance goes where quotations go
 
         output.setText("", TextView.BufferType.EDITABLE);
-        //second instance goes where qutations go
+        //second instance goes where quotations go
     }
 }
