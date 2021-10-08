@@ -89,17 +89,13 @@ public class Tile {
     public Bug getType() {
         return type;
     }
-
     public Tile getOnTopOf() {
         return onTopOf;
     }
-
     public PlayerPiece getPlayerPiece(){
         return piece;
     }
-
-
-
+    public boolean getVisited() { return visited; }
 
     /**
      * Method for drawing hexagon.

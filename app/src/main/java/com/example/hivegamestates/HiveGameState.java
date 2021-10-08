@@ -169,8 +169,31 @@ public class HiveGameState {
     }
 
     public void dfs(int row, int col, ArrayList<ArrayList<Tile>> board){
-        
+
     }
+
+    /**
+     * Helper method for the DFS,
+     * determines if a tile is valid to visit
+     * @param tile
+     * @return
+     */
+    public boolean isValidDFS(Tile tile){
+
+        if(tile.getIndexX() < 0 || tile.getIndexY() < 0 ||
+           tile.getIndexX() >= gameBoard.size() || tile.getIndexY() >= gameBoard.size()){
+            return false; //out of bounds
+        }
+
+        //already visited
+        if(tile.getVisited()){
+            return false;
+        }
+
+        //can be visited, is valid tile
+        return true;
+    }
+
 
     /**
      * checks a tile to see if it is surrounded to the point
