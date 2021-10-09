@@ -9,7 +9,7 @@ public class HiveGameState {
 
     public enum Turn{
         PLAYER1,
-        COMPUTER,
+        PLAYER2,
         NETWORKPLAYER
     }
 
@@ -25,11 +25,11 @@ public class HiveGameState {
     //Variables of gameState
     private ArrayList<ArrayList<Tile>> gameBoard;
     private ArrayList<ArrayList<Tile>> displayBoard;
-    private Tile.Bug piecesRemain[][];
+    private int piecesRemain[][]; //represents how many of each bug a player has
     private Turn whoseTurn;
 
     private static final int tileSize = 300;
-
+    private final int GBSIZE = 10; //size of the gameboard
     private ArrayList<Tile> potentialMoves;
     /**
      * Default constructor.
@@ -37,26 +37,53 @@ public class HiveGameState {
     public HiveGameState(){
         //Initialize gameBoard to be 14 rows of empty tiles
         gameBoard = new ArrayList<ArrayList<Tile>>();
-        for(int i=0; i < 14; i++) {
-            gameBoard.add(new ArrayList<Tile>(14));
+        for(int i=0; i < GBSIZE; i++) {
+            gameBoard.add(new ArrayList<Tile>(GBSIZE));
         }
-        for(int i = 0; i < 14; i++){
-            for(int j = 0; j < 14; j++){
+        for(int i = 0; i < GBSIZE; i++){
+            for(int j = 0; j < GBSIZE; j++){
                 gameBoard.get(i).add(j, new Tile (i, j, Tile.PlayerPiece.EMPTY));
             }
         }
         //Initialize displayBoard to be mirror gameBoard
         displayBoard = new ArrayList<ArrayList<Tile>>();
-        for(int i=0; i < 14; i++) {
-            displayBoard.add(new ArrayList<Tile>(14));
+        for(int i=0; i < GBSIZE; i++) {
+            displayBoard.add(new ArrayList<Tile>(GBSIZE));
         }
-        for(int i = 0; i < 14; i++){
-            for(int j = 0; j < 14; j++){
+        for(int i = 0; i < GBSIZE; i++){
+            for(int j = 0; j < GBSIZE; j++){
                 displayBoard.get(i).add(j, gameBoard.get(i).get(j));
             }
         }
-        piecesRemain = new Tile.Bug[2][5];
-        whoseTurn = Turn.PLAYER1;
+        //initialize piecesRemain for all players
+        //row 0 = PLAYER1
+        //row 1 = PLAYER2
+        piecesRemain = new int[2][5];
+        for(int i = 0; i < piecesRemain.length; i++){
+            for(int j = 0; j < piecesRemain[i].length; j++){
+                switch(j){
+                    case 0: // 1 Queen Bee
+                        piecesRemain[i][j] = 1;
+                        break;
+                    case 1: //4 Spiders
+                        piecesRemain[i][j] = 4;
+                        break;
+
+                    case 2: //4 Beetles
+                        piecesRemain[i][j] = 4;
+                        break;
+
+                    case 3: //6 Grasshoppers
+                        piecesRemain[i][j] = 6;
+                        break;
+
+                    case 4: //6 Soldier Ants
+                        piecesRemain[i][j] = 6;
+                        break;
+                }
+            }
+        }
+        whoseTurn = Turn.PLAYER1; //initialize the gameboard with Player1 going first
     }
 
     /**
@@ -65,32 +92,33 @@ public class HiveGameState {
      */
     public HiveGameState(HiveGameState other){
         this.gameBoard = new ArrayList<ArrayList<Tile>>();
-        for(int i=0; i < 14; i++) {
-            this.gameBoard.add(new ArrayList<Tile>(14));
+        for(int i=0; i < GBSIZE; i++) {
+            this.gameBoard.add(new ArrayList<Tile>(GBSIZE));
         }
 
-        for (int row = 0; row < 14; row++){
-            for (int col = 0; col < 14; col++){
+        for (int row = 0; row < GBSIZE; row++){
+            for (int col = 0; col < GBSIZE; col++){
                 Tile copyTile = new Tile(other.gameBoard.get(row).get(col));
                 this.gameBoard.get(row).add(col, copyTile);
             }
         }
         this.displayBoard = new ArrayList<ArrayList<Tile>>();
-        for(int i=0; i < 14; i++) {
-            this.displayBoard.add(new ArrayList<Tile>(14));
+        for(int i=0; i < GBSIZE; i++) {
+            this.displayBoard.add(new ArrayList<Tile>(GBSIZE));
         }
-        for (int row = 0; row < 14; row++){
-            for (int col = 0; col < 14; col++){
+        for (int row = 0; row < GBSIZE; row++){
+            for (int col = 0; col < GBSIZE; col++){
                 Tile copyTile = new Tile(other.displayBoard.get(row).get(col));
                 this.displayBoard.get(row).add(col, copyTile);
             }
         }
-        this.piecesRemain = new Tile.Bug[2][5];
+        this.piecesRemain = new int[2][5];
         for (int i = 0; i < other.getPiecesRemain().length; i++){
             for (int j = 0; j < other.getPiecesRemain()[i].length; j++){
                 this.piecesRemain[i][j] = other.getPiecesRemain()[i][j];
             }
         }
+        this.whoseTurn = other.whoseTurn;
     }
 
     /**
@@ -827,12 +855,12 @@ public class HiveGameState {
      */
     @Override
     public String toString(){
-        String currentState = "";
+        String currentState = whoseTurn + "'s turn, here is the game board:\n";
         for (ArrayList<Tile> row: gameBoard) {
             for (Tile tile : row) {
                 switch (tile.getType()) {
                     case EMPTY:
-                        currentState += "*"; //add space for nothing there
+                        currentState += "***"; //add space for nothing there
                         break;
                     case QUEEN_BEE:
                         currentState += tile.getPlayerPiece().name() + "Q";
@@ -854,6 +882,38 @@ public class HiveGameState {
             }
             currentState += "\n";
         }
+        for (int i = 0; i < piecesRemain.length; i++) {
+            if(i == 0){
+                currentState +=  "\nPLAYER1's pieces in hand:\n";
+            }
+            else{
+                currentState +=  "PLAYER2's pieces in hand:\n";
+            }
+            for (int j = 0; j < piecesRemain[i].length; j++) {
+                switch(j){
+                    case 0: // 1 Queen Bee
+                        currentState += " Queen:" + piecesRemain[i][j];
+                        break;
+                    case 1: //4 Spiders
+                        currentState += " Spiders:" + piecesRemain[i][j];
+                        break;
+
+                    case 2: //4 Beetles
+                        currentState += " Beetles:" + piecesRemain[i][j];
+                        break;
+
+                    case 3: //6 Grasshoppers
+                        currentState += " Grasshoppers:" + piecesRemain[i][j];
+                        break;
+
+                    case 4: //6 Soldier Ants
+                        currentState += " Ants:" + piecesRemain[i][j];
+                        break;
+                }
+            }
+            currentState += "\n";
+        }
+        currentState += "\n"; //looks better this way, it ain't much, but it's honest work
         return currentState;
     }
 
@@ -915,6 +975,40 @@ public class HiveGameState {
         return positionInGameBoard;
     }
 
+    /**
+     * Shows a piece has been removed from the integer representation of the player's hand
+     * @param bug the bug piece to decrement in the "hand"
+     */
+    public void removePiecesRemain(Tile.Bug bug){
+        int player;
+        if(getWhoseTurn() == Turn.PLAYER1){
+            player = 0;
+        }
+        else{
+            player = 1;
+        }
+        switch(bug){
+            case QUEEN_BEE: // 1 Queen Bee
+                piecesRemain[player][0]--;
+                break;
+            case SPIDER: //4 Spiders
+                piecesRemain[player][1]--;
+                break;
+
+            case BEETLE: //4 Beetles
+                piecesRemain[player][2]--;
+                break;
+
+            case GRASSHOPPER: //6 Grasshoppers
+                piecesRemain[player][3]--;
+                break;
+
+            case ANT: //6 Soldier Ants
+                piecesRemain[player][4]--;
+                break;
+        }
+    }
+
     //testing classes for playing Oracle
     public void addTile(Tile newTile){
         gameBoard.get(newTile.getIndexX()).set(newTile.getIndexY(), newTile);
@@ -932,8 +1026,17 @@ public class HiveGameState {
         return displayBoard;
     }
 
-    public Tile.Bug[][] getPiecesRemain(){
+    public int[][] getPiecesRemain(){
         return piecesRemain;
     }
+
+    public void setWhoseTurn(Turn turn){
+        whoseTurn = turn;
+    }
+
+    public Turn getWhoseTurn(){
+        return whoseTurn;
+    }
+
 
 }
