@@ -17,8 +17,8 @@ public class Tile {
 
     public enum PlayerPiece {
         EMPTY,
-        BLACK,
-        WHITE
+        B,
+        W
     }
 
     // Class Variables
@@ -41,17 +41,18 @@ public class Tile {
         indexX = x;
         indexY = y;
         this.piece = piece;
-        visited  = false;
     }
 
     /**
-     *
+     * Uhh this isn't supposed to bethe copy constructor. Its supposed to be used in move to
+     * make a piece have another beneath it.
      * @param bug which type of piece is getting copied
-     * @param tile
+     * @param onTop
      */
-    public Tile(Bug bug, Tile tile, int x, int y) {
+    public Tile(Bug bug, Tile onTop, int x, int y, PlayerPiece pieceInstance) {
         type = bug;
-        onTopOf = tile.onTopOf;
+        piece = pieceInstance;
+        onTopOf = onTop;
         indexX = x;
         indexY = y;
     }
@@ -61,11 +62,18 @@ public class Tile {
      * @param other
      * @return a new copied Tile object
      */
-    public Tile(Tile other){
-        Tile tile = new Tile(other.indexX, other.indexY, other.piece);
-        tile.onTopOf = other.onTopOf;
-        tile.type = other.type;
-        tile.visited = other.visited;
+    public Tile(Tile other) {
+        if (other == null) {
+
+        } else {
+            //Tile tile = new Tile(other.getIndexX(), other.getIndexY(), other.getPlayerPiece());
+            this.indexX = other.getIndexX();
+            this.indexY = other.getIndexY();
+            this.piece = other.getPlayerPiece();
+            this.onTopOf = new Tile(other.getOnTopOf());
+            this.type = other.getType();
+            this.visited = other.visited;
+        }
     }
 
     public void setType(Bug bug) {
@@ -89,9 +97,11 @@ public class Tile {
     public Bug getType() {
         return type;
     }
+
     public Tile getOnTopOf() {
         return onTopOf;
     }
+
     public PlayerPiece getPlayerPiece(){
         return piece;
     }
