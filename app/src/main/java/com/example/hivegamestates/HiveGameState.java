@@ -4,6 +4,7 @@ package com.example.hivegamestates;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Queue;
 
 public class HiveGameState {
 
@@ -27,6 +28,7 @@ public class HiveGameState {
     private ArrayList<ArrayList<Tile>> displayBoard;
     private int piecesRemain[][]; //represents how many of each bug a player has
     private Turn whoseTurn;
+    private int countVisited;
 
     private static final int tileSize = 300;
     private final int GBSIZE = 10; //size of the gameboard
@@ -196,7 +198,7 @@ public class HiveGameState {
                     testBoard.get(i).set(j, new Tile (gameBoard.get(i).get(j)));
                 }
                 //update the row and col of the first position where the row and col aren't empty
-                //for use in the dfs
+                //for use in the bfs
                 if(!firstFound && testBoard.get(i).get(j).getType() != Tile.Bug.EMPTY){
                     row = i;
                     col = j;
@@ -205,23 +207,123 @@ public class HiveGameState {
             }
         }
 
-        if(row + col > -2){ //if the board isn't empty, run dfs
-            dfs(row, col, testBoard);
+        if(row + col > -2){ //if the board isn't empty, run bfs
+            int handPieces = 0;
+            bfs(row, col, testBoard);
+            //counts the amount of pieces remaining in the player's hand
+            for(int[] player: piecesRemain){
+                for(int piece: player){
+                    handPieces += piece;
+                }
+            }
+            if(countVisited == 22 - handPieces) { //there are 22 total pieces
+                return false; //if the board can be traversed with bfs and all
+                            //tiles on the boardhave been denoted as visited then
+                            //return false the hive has NOT been broken
+            }
         }
-        return false;
-    }
-
-    public void dfs(int row, int col, ArrayList<ArrayList<Tile>> board){
-
+        return true; //hive will break, can't move piece
     }
 
     /**
-     * Helper method for the DFS,
-     * determines if a tile is valid to visit
-     * @param tile
-     * @return
+     * Performs an iterative breadth first search, found this code on stackOverFlow
+     * https://stackoverflow.com/questions/2969033/recursive-breadth-first-travel-function-in-java-or-c
+     * @param row the starting x position
+     * @param col the starting y position
+     * @param board the testBoard to run bfs on
      */
-    public boolean isValidDFS(Tile tile){
+    public int bfs(int row, int col, ArrayList<ArrayList<Tile>> board){
+        countVisited = 0; //keeps count of the visited tiles
+        Queue<Tile> tileQueue = (Queue<Tile>) new ArrayList<Tile>();
+        tileQueue.offer(board.get(row).get(col)); //pass in the starting x and y position as the root
+
+        while(!tileQueue.isEmpty()){
+            int x = row;
+            int y = col;
+
+            tileQueue.poll().setVisited(true); //visits the tile at front of queue
+            countVisited++; //update the count to reflect a visited tile
+
+            if (x % 2 == 0) {
+                // For even rows
+                //LU: (row--, col), LM: (row, col--), LD: (row++, col),
+                //RU: (row--, col++), RM: (row, col++), RD: (row++, col++)
+
+                //Queue all possible valid neighbors
+                if (isValidBFS(board.get(x - 1).get(y))) {
+                    //Check tile above left of tile
+                    tileQueue.offer(board.get(x - 1).get(y));
+                    //update last valid neighbor position
+                    row = x-1;
+                    col = y;
+                }
+                if (isValidBFS(board.get(x - 1).get(y + 1))) {
+                    //Check tile above right of tile
+                    tileQueue.offer(board.get(x - 1).get(y + 1));
+                }
+                if(isValidBFS(board.get(x).get(y-1))){
+                    //Check tile to the left of tile
+                    tileQueue.offer(board.get(x).get(y-1));
+                }
+                if(isValidBFS(board.get(x).get(y+1))){
+                    //Check tile to the right of tile
+                    tileQueue.offer(board.get(x).get(y+1));
+                }
+                if(isValidBFS(board.get(x+1).get(y))){
+                    //Check tile to the lower left of tile
+                    tileQueue.offer(board.get(x+1).get(y));
+                }
+                if(isValidBFS(board.get(x+1).get(y+1))){
+                    //Check tile to the lower right of tile
+                    tileQueue.offer(board.get(x+1).get(y + 1));
+                }
+            }
+            else{
+                //for odd rows
+                //LU: (row--, col--), LM: (row, col--), LD: (row++, col--),
+                //RU: (row--, col), RM: (row, col++), RD: (row++, col)
+
+                //Queue all possible valid neighbors
+                if (isValidBFS(board.get(x - 1).get(y - 1))) {
+                    //Check tile above left of tile
+                    tileQueue.offer(board.get(x - 1).get(y - 1));
+                }
+                if (isValidBFS(board.get(x - 1).get(y))) {
+                    //Check tile above right of tile
+                    tileQueue.offer(board.get(x - 1).get(y));
+                }
+                if(isValidBFS(board.get(x).get(y-1))){
+                    //Check tile to the left of tile
+                    tileQueue.offer(board.get(x).get(y-1));
+                }
+                if(isValidBFS(board.get(x).get(y+1))){
+                    //Check tile to the right of tile
+                    tileQueue.offer(board.get(x).get(y+1));
+                }
+                if(isValidBFS(board.get(x+1).get(y-1))){
+                    //Check tile to the lower left of tile
+                    tileQueue.offer(board.get(x+1).get(y-1));
+                }
+                if(isValidBFS(board.get(x+1).get(y))){
+                    //Check tile to the lower right of tile
+                    tileQueue.offer(board.get(x+1).get(y));
+                }
+            }
+        }
+        return countVisited;
+    }
+
+    /**
+     * Helper method for the BFS,
+     * determines if a tile is valid to visit
+     * @param tile the tile about to be visited
+     * @return true if valid to visit, false otherwise
+     */
+    public boolean isValidBFS(Tile tile){
+
+        if(tile.getType() == Tile.Bug.EMPTY){
+            return false; //empty spaces aren't part of the graph
+        }
 
         if(tile.getIndexX() < 0 || tile.getIndexY() < 0 ||
            tile.getIndexX() >= gameBoard.size() || tile.getIndexY() >= gameBoard.size()){

@@ -79,11 +79,9 @@ public class Tile {
     public void setType(Bug bug) {
         type = bug;
     }
-
     public void setOnTopOf(Tile tile) {
         onTopOf = tile;
     }
-
     public void setIndexX(int x) {
         indexX = x;
     }
@@ -97,15 +95,16 @@ public class Tile {
     public Bug getType() {
         return type;
     }
-
     public Tile getOnTopOf() {
         return onTopOf;
     }
-
     public PlayerPiece getPlayerPiece(){
         return piece;
     }
     public boolean getVisited() { return visited; }
+    public void setVisited(boolean v){
+        visited = v;
+    }
 
     /**
      * Method for drawing hexagon.
