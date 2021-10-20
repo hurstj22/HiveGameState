@@ -17,8 +17,8 @@ public class Tile {
 
     public enum PlayerPiece {
         EMPTY,
-        BLACK,
-        WHITE
+        B,
+        W
     }
 
     // Class Variables
@@ -27,6 +27,7 @@ public class Tile {
     private PlayerPiece piece;
     private int indexX; //integer index in the arrayList of tiles
     private int indexY;
+    private boolean visited; //variable for the DFS
 
     /**
      * Makes a default constructor for a tile
@@ -43,13 +44,15 @@ public class Tile {
     }
 
     /**
-     *
+     * Uhh this isn't supposed to bethe copy constructor. Its supposed to be used in move to
+     * make a piece have another beneath it.
      * @param bug which type of piece is getting copied
-     * @param tile
+     * @param onTop
      */
-    public Tile(Bug bug, Tile tile, int x, int y) {
+    public Tile(Bug bug, Tile onTop, int x, int y, PlayerPiece pieceInstance) {
         type = bug;
-        onTopOf = tile.onTopOf;
+        piece = pieceInstance;
+        onTopOf = onTop;
         indexX = x;
         indexY = y;
     }
@@ -59,20 +62,26 @@ public class Tile {
      * @param other
      * @return a new copied Tile object
      */
-    public Tile(Tile other){
-        Tile tile = new Tile(other.indexX, other.indexY, other.piece);
-        tile.onTopOf = other.onTopOf;
-        tile.type = other.type;
+    public Tile(Tile other) {
+        if (other == null) {
+
+        } else {
+            //Tile tile = new Tile(other.getIndexX(), other.getIndexY(), other.getPlayerPiece());
+            this.indexX = other.getIndexX();
+            this.indexY = other.getIndexY();
+            this.piece = other.getPlayerPiece();
+            this.onTopOf = new Tile(other.getOnTopOf());
+            this.type = other.getType();
+            this.visited = other.visited;
+        }
     }
 
     public void setType(Bug bug) {
         type = bug;
     }
-
     public void setOnTopOf(Tile tile) {
         onTopOf = tile;
     }
-
     public void setIndexX(int x) {
         indexX = x;
     }
@@ -86,17 +95,16 @@ public class Tile {
     public Bug getType() {
         return type;
     }
-
     public Tile getOnTopOf() {
         return onTopOf;
     }
-
     public PlayerPiece getPlayerPiece(){
         return piece;
     }
-
-
-
+    public boolean getVisited() { return visited; }
+    public void setVisited(boolean v){
+        visited = v;
+    }
 
     /**
      * Method for drawing hexagon.
