@@ -4,13 +4,12 @@ package com.example.hivegamestates;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Queue;
 
 public class HiveGameState {
 
     public enum Turn{
         PLAYER1,
-        PLAYER2,
+        COMPUTER,
         NETWORKPLAYER
     }
 
@@ -26,12 +25,11 @@ public class HiveGameState {
     //Variables of gameState
     private ArrayList<ArrayList<Tile>> gameBoard;
     private ArrayList<ArrayList<Tile>> displayBoard;
-    private int piecesRemain[][]; //represents how many of each bug a player has
+    private Tile.Bug piecesRemain[][];
     private Turn whoseTurn;
-    private int countVisited;
 
     private static final int tileSize = 300;
-    private final int GBSIZE = 10; //size of the gameboard
+
     private ArrayList<Tile> potentialMoves;
     /**
      * Default constructor.
@@ -39,53 +37,20 @@ public class HiveGameState {
     public HiveGameState(){
         //Initialize gameBoard to be 14 rows of empty tiles
         gameBoard = new ArrayList<ArrayList<Tile>>();
-        for(int i=0; i < GBSIZE; i++) {
-            gameBoard.add(new ArrayList<Tile>(GBSIZE));
-        }
-        for(int i = 0; i < GBSIZE; i++){
-            for(int j = 0; j < GBSIZE; j++){
-                gameBoard.get(i).add(j, new Tile (i, j, Tile.PlayerPiece.EMPTY));
+        for(int i = 0; i < 14; i++){
+            for(int j = 0; j < 14; j++){
+                gameBoard.get(i).set(j, new Tile (i, j, Tile.PlayerPiece.EMPTY));
             }
         }
         //Initialize displayBoard to be mirror gameBoard
         displayBoard = new ArrayList<ArrayList<Tile>>();
-        for(int i=0; i < GBSIZE; i++) {
-            displayBoard.add(new ArrayList<Tile>(GBSIZE));
-        }
-        for(int i = 0; i < GBSIZE; i++){
-            for(int j = 0; j < GBSIZE; j++){
-                displayBoard.get(i).add(j, gameBoard.get(i).get(j));
+        for(int i = 0; i < 14; i++){
+            for(int j = 0; j < 14; j++){
+                displayBoard.get(i).set(j, gameBoard.get(i).get(j));
             }
         }
-        //initialize piecesRemain for all players
-        //row 0 = PLAYER1
-        //row 1 = PLAYER2
-        piecesRemain = new int[2][5];
-        for(int i = 0; i < piecesRemain.length; i++){
-            for(int j = 0; j < piecesRemain[i].length; j++){
-                switch(j){
-                    case 0: // 1 Queen Bee
-                        piecesRemain[i][j] = 1;
-                        break;
-                    case 1: //4 Spiders
-                        piecesRemain[i][j] = 4;
-                        break;
-
-                    case 2: //4 Beetles
-                        piecesRemain[i][j] = 4;
-                        break;
-
-                    case 3: //6 Grasshoppers
-                        piecesRemain[i][j] = 6;
-                        break;
-
-                    case 4: //6 Soldier Ants
-                        piecesRemain[i][j] = 6;
-                        break;
-                }
-            }
-        }
-        whoseTurn = Turn.PLAYER1; //initialize the gameboard with Player1 going first
+        piecesRemain = new Tile.Bug[2][5];
+        whoseTurn = Turn.PLAYER1;
     }
 
     /**
@@ -94,33 +59,23 @@ public class HiveGameState {
      */
     public HiveGameState(HiveGameState other){
         this.gameBoard = new ArrayList<ArrayList<Tile>>();
-        for(int i=0; i < GBSIZE; i++) {
-            this.gameBoard.add(new ArrayList<Tile>(GBSIZE));
-        }
-
-        for (int row = 0; row < GBSIZE; row++){
-            for (int col = 0; col < GBSIZE; col++){
-                Tile copyTile = new Tile(other.gameBoard.get(row).get(col));
-                this.gameBoard.get(row).add(col, copyTile);
+        for (int row = 0; row < gameBoard.size(); row++){
+            for (int col = 0; col < gameBoard.get(row).size(); col++){
+                this.gameBoard.get(row).set(col, new Tile(other.gameBoard.get(row).get(col)));
             }
         }
         this.displayBoard = new ArrayList<ArrayList<Tile>>();
-        for(int i=0; i < GBSIZE; i++) {
-            this.displayBoard.add(new ArrayList<Tile>(GBSIZE));
-        }
-        for (int row = 0; row < GBSIZE; row++){
-            for (int col = 0; col < GBSIZE; col++){
-                Tile copyTile = new Tile(other.displayBoard.get(row).get(col));
-                this.displayBoard.get(row).add(col, copyTile);
+        for (int row = 0; row < displayBoard.size(); row++){
+            for (int col = 0; col < displayBoard.get(row).size(); col++){
+                this.displayBoard.get(row).set(col, new Tile(other.displayBoard.get(row).get(col)));
             }
         }
-        this.piecesRemain = new int[2][5];
-        for (int i = 0; i < other.getPiecesRemain().length; i++){
-            for (int j = 0; j < other.getPiecesRemain()[i].length; j++){
-                this.piecesRemain[i][j] = other.getPiecesRemain()[i][j];
+        this.piecesRemain = new Tile.Bug[2][5];
+        for (int i = 0; i < other.piecesRemain.length; i++){
+            for (int j = 0; j < other.piecesRemain[i].length; j++){
+                this.piecesRemain[i][j] = other.piecesRemain[i][j];
             }
         }
-        this.whoseTurn = other.whoseTurn;
     }
 
     /**
@@ -175,6 +130,7 @@ public class HiveGameState {
         return false;
     }
 
+
     /**
      * Checks the hive (ie gameboard) to see if the entire board is connected and if
      * without the Tile in the spot it currently is the board would STILL be connected
@@ -182,172 +138,9 @@ public class HiveGameState {
      * @return false if move would NOT break the hive, true if move would break hive
      */
     public boolean breakHive(Tile tile){
-        int row = -1;
-        int col = -1;
-        boolean firstFound = false;
-
-        //perform a DFS on the gameBoard
-        //copy the old gameBoard into a new temporary board to perform dfs on
-        ArrayList<ArrayList<Tile>> testBoard = new ArrayList<ArrayList<Tile>>();
-        for(int i = 0; i < gameBoard.size(); i++){
-            for(int j = 0; j < gameBoard.size(); j++){
-                if(i == tile.getIndexX() && j == tile.getIndexY()){
-                    testBoard.get(i).set(j, new Tile(i, j, Tile.PlayerPiece.EMPTY)); //take out the tile in question
-                }
-                else{
-                    testBoard.get(i).set(j, new Tile (gameBoard.get(i).get(j)));
-                }
-                //update the row and col of the first position where the row and col aren't empty
-                //for use in the bfs
-                if(!firstFound && testBoard.get(i).get(j).getType() != Tile.Bug.EMPTY){
-                    row = i;
-                    col = j;
-                    firstFound = true;
-                }
-            }
-        }
-
-        if(row + col > -2){ //if the board isn't empty, run bfs
-            countVisited = 0; //keeps count of the visited tiles
-            int handPieces = 0;
-            bfs(row, col, testBoard);
-            //counts the amount of pieces remaining in the player's hand
-            for(int[] player: piecesRemain){
-                for(int piece: player){
-                    handPieces += piece;
-                }
-            }
-            if(countVisited == 21 - handPieces) { //there are 22 total pieces, 21 counting the piece taken out
-                return false; //if the board can be traversed with bfs and all
-                            //tiles on the boardhave been denoted as visited then
-                            //return false the hive has NOT been broken
-            }
-        }
-        return true; //hive will break, can't move piece
+        //perform a DFS on tile
+        return false;
     }
-
-    /**
-     * Performs an iterative breadth first search, found this code on stackOverFlow
-     * https://stackoverflow.com/questions/2969033/recursive-breadth-first-travel-function-in-java-or-c
-     * @param row the starting x position
-     * @param col the starting y position
-     * @param board the testBoard to run bfs on
-     */
-    public int bfs(int row, int col, ArrayList<ArrayList<Tile>> board){
-        Queue<Tile> tileQueue = (Queue<Tile>) new ArrayList<Tile>();
-        tileQueue.offer(board.get(row).get(col)); //pass in the starting x and y position as the root
-
-        while(!tileQueue.isEmpty()){
-            int x = row;
-            int y = col;
-
-            tileQueue.poll().setVisited(true); //visits the tile at front of queue
-            countVisited++; //update the count to reflect a visited tile
-
-            if (x % 2 == 0) {
-                // For even rows
-                //LU: (row--, col), LM: (row, col--), LD: (row++, col),
-                //RU: (row--, col++), RM: (row, col++), RD: (row++, col++)
-
-                //Queue all possible valid neighbors
-                if (isValidBFS(board.get(x - 1).get(y))) {
-                    //Check tile above left of tile
-                    tileQueue.offer(board.get(x - 1).get(y));
-                    bfs(x - 1, y, board); //call bbfs on neighbor
-                }
-                if (isValidBFS(board.get(x - 1).get(y + 1))) {
-                    //Check tile above right of tile
-                    tileQueue.offer(board.get(x - 1).get(y + 1));
-                    bfs(x - 1, y+1, board); //call bbfs on neighbor
-                }
-                if(isValidBFS(board.get(x).get(y-1))){
-                    //Check tile to the left of tile
-                    tileQueue.offer(board.get(x).get(y-1));
-                    bfs(x, y-1, board); //call bbfs on neighbor
-                }
-                if(isValidBFS(board.get(x).get(y+1))){
-                    //Check tile to the right of tile
-                    tileQueue.offer(board.get(x).get(y+1));
-                    bfs(x, y+1, board); //call bbfs on neighbor
-                }
-                if(isValidBFS(board.get(x+1).get(y))){
-                    //Check tile to the lower left of tile
-                    tileQueue.offer(board.get(x+1).get(y));
-                    bfs(x + 1, y, board); //call bbfs on neighbor
-                }
-                if(isValidBFS(board.get(x+1).get(y+1))){
-                    //Check tile to the lower right of tile
-                    tileQueue.offer(board.get(x+1).get(y + 1));
-                    bfs(x + 1, y+1, board); //call bbfs on neighbor
-                }
-            }
-            else{
-                //for odd rows
-                //LU: (row--, col--), LM: (row, col--), LD: (row++, col--),
-                //RU: (row--, col), RM: (row, col++), RD: (row++, col)
-
-                //Queue all possible valid neighbors
-                if (isValidBFS(board.get(x - 1).get(y - 1))) {
-                    //Check tile above left of tile
-                    tileQueue.offer(board.get(x - 1).get(y - 1));
-                    bfs(x - 1, y-1, board); //call bbfs on neighbor
-                }
-                if (isValidBFS(board.get(x - 1).get(y))) {
-                    //Check tile above right of tile
-                    tileQueue.offer(board.get(x - 1).get(y));
-                    bfs(x - 1, y, board); //call bbfs on neighbor
-                }
-                if(isValidBFS(board.get(x).get(y-1))){
-                    //Check tile to the left of tile
-                    tileQueue.offer(board.get(x).get(y-1));
-                    bfs(x, y-1, board); //call bbfs on neighbor
-                }
-                if(isValidBFS(board.get(x).get(y+1))){
-                    //Check tile to the right of tile
-                    tileQueue.offer(board.get(x).get(y+1));
-                    bfs(x, y+1, board); //call bbfs on neighbor
-                }
-                if(isValidBFS(board.get(x+1).get(y-1))){
-                    //Check tile to the lower left of tile
-                    tileQueue.offer(board.get(x+1).get(y-1));
-                    bfs(x + 1, y-1, board); //call bbfs on neighbor
-                }
-                if(isValidBFS(board.get(x+1).get(y))){
-                    //Check tile to the lower right of tile
-                    tileQueue.offer(board.get(x+1).get(y));
-                    bfs(x + 1, y, board); //call bbfs on neighbor
-                }
-            }
-        }
-        return countVisited;
-    }
-
-    /**
-     * Helper method for the BFS,
-     * determines if a tile is valid to visit
-     * @param tile the tile about to be visited
-     * @return true if valid to visit, false otherwise
-     */
-    public boolean isValidBFS(Tile tile){
-
-        if(tile.getType() == Tile.Bug.EMPTY){
-            return false; //empty spaces aren't part of the graph
-        }
-
-        if(tile.getIndexX() < 0 || tile.getIndexY() < 0 ||
-           tile.getIndexX() >= gameBoard.size() || tile.getIndexY() >= gameBoard.size()){
-            return false; //out of bounds
-        }
-
-        //already visited
-        if(tile.getVisited()){
-            return false;
-        }
-
-        //can be visited, is valid tile
-        return true;
-    }
-
 
     /**
      * checks a tile to see if it is surrounded to the point
@@ -399,7 +192,7 @@ public class HiveGameState {
                     RM = true;
                     sum += x + (y + 1);
                 }
-              //Check tile below left of tile
+                //Check tile below left of tile
                 if (gameBoard.get(x + 1).get(y).getType() != Tile.Bug.EMPTY) {
                     count++;
                     LD = true;
@@ -541,82 +334,82 @@ public class HiveGameState {
      * @return returns true if there are valid moves for the beetle piece. False if not.
      */
     public boolean beetleSearch(Tile tile) {
-            // Ensure any tile that the beetle touches touches another bug tile
-            // before highlighting as potential
-            int x = tile.getIndexX();
-            int y = tile.getIndexY();
+        // Ensure any tile that the beetle touches touches another bug tile
+        // before highlighting as potential
+        int x = tile.getIndexX();
+        int y = tile.getIndexY();
 
-            if (x % 2 == 0) {
-                // For even rows
+        if (x % 2 == 0) {
+            // For even rows
 
-                if (nextTo(tile, gameBoard.get(x - 1).get(y))) {
-                    //Check tile above left of tile is nextTo another tile
-                    //If true, add tile to ArrayList<Tile> potentials
-                    potentialMoves.add(gameBoard.get(x - 1).get(y));
-                    return true;
-                } else if (nextTo(tile, gameBoard.get(x - 1).get(y + 1))) {
-                    //Check tile above right of til is nextTo another tile
-                    //If true, add tile to ArrayList<Tile> potentials
-                    potentialMoves.add(gameBoard.get(x - 1).get(y + 1));
-                    return true;
-                } else if (nextTo(tile, gameBoard.get(x).get(y - 1))) {
-                    //Check tile to the left of til is nextTo another tile
-                    //If true, add tile to ArrayList<Tile> potentials
-                    potentialMoves.add(gameBoard.get(x).get(y - 1));
-                    return true;
-                } else if (nextTo(tile, gameBoard.get(x).get(y + 1))) {
-                    //Check tile to the right of ti is nextTo another tile
-                    //If true, add tile to ArrayList<Tile> potentials
-                    potentialMoves.add(gameBoard.get(x).get(y + 1));
-                    return true;
-                } else if (nextTo(tile, gameBoard.get(x + 1).get(y))) {
-                    //Check tile below left of tile is nextTo another tile
-                    //If true, add tile to ArrayList<Tile> potentials
-                    potentialMoves.add(gameBoard.get(x + 1).get(y));
-                    return true;
-                } else if (nextTo(tile, gameBoard.get(x + 1).get(y + 1))) {
-                    //Check tile below right of til is nextTo another tile
-                    //If true, add tile to ArrayList<Tile> potentials
-                    potentialMoves.add(gameBoard.get(x + 1).get(y + 1));
-                    return true;
-                }
-            } else {
-                // For odd rows
-
-                if (nextTo(tile, gameBoard.get(x - 1).get(y - 1))) {
-                    //Check tile above left of tile is nextTo another tile
-                    //If true, add tile to ArrayList<Tile> potentials
-                    potentialMoves.add(gameBoard.get(x - 1).get(y - 1));
-                    return true;
-                } else if (nextTo(tile, gameBoard.get(x - 1).get(y))) {
-                    //Check tile above right of til is nextTo another tile
-                    //If true, add tile to ArrayList<Tile> potentials
-                    potentialMoves.add(gameBoard.get(x - 1).get(y));
-                    return true;
-                } else if (nextTo(tile, gameBoard.get(x).get(y - 1))) {
-                    //Check tile to the left of til is nextTo another tile
-                    //If true, add tile to ArrayList<Tile> potentials
-                    potentialMoves.add(gameBoard.get(x).get(y - 1));
-                    return true;
-                } else if (nextTo(tile, gameBoard.get(x).get(y + 1))) {
-                    //Check tile to the right of ti is nextTo another tile
-                    //If true, add tile to ArrayList<Tile> potentials
-                    potentialMoves.add(gameBoard.get(x).get(y + 1));
-                    return true;
-                } else if (nextTo(tile, gameBoard.get(x + 1).get(y - 1))) {
-                    //Check tile below left of tile is nextTo another tile
-                    //If true, add tile to ArrayList<Tile> potentials
-                    potentialMoves.add(gameBoard.get(x + 1).get(y - 1));
-                    return true;
-                } else if (nextTo(tile, gameBoard.get(x + 1).get(y))) {
-                    //Check tile below right of til is nextTo another tile
-                    //If true, add tile to ArrayList<Tile> potentials
-                    potentialMoves.add(gameBoard.get(x + 1).get(y));
-                    return true;
-                }
-
+            if (nextTo(tile, gameBoard.get(x - 1).get(y))) {
+                //Check tile above left of tile is nextTo another tile
+                //If true, add tile to ArrayList<Tile> potentials
+                potentialMoves.add(gameBoard.get(x - 1).get(y));
+                return true;
+            } else if (nextTo(tile, gameBoard.get(x - 1).get(y + 1))) {
+                //Check tile above right of til is nextTo another tile
+                //If true, add tile to ArrayList<Tile> potentials
+                potentialMoves.add(gameBoard.get(x - 1).get(y + 1));
+                return true;
+            } else if (nextTo(tile, gameBoard.get(x).get(y - 1))) {
+                //Check tile to the left of til is nextTo another tile
+                //If true, add tile to ArrayList<Tile> potentials
+                potentialMoves.add(gameBoard.get(x).get(y - 1));
+                return true;
+            } else if (nextTo(tile, gameBoard.get(x).get(y + 1))) {
+                //Check tile to the right of ti is nextTo another tile
+                //If true, add tile to ArrayList<Tile> potentials
+                potentialMoves.add(gameBoard.get(x).get(y + 1));
+                return true;
+            } else if (nextTo(tile, gameBoard.get(x + 1).get(y))) {
+                //Check tile below left of tile is nextTo another tile
+                //If true, add tile to ArrayList<Tile> potentials
+                potentialMoves.add(gameBoard.get(x + 1).get(y));
+                return true;
+            } else if (nextTo(tile, gameBoard.get(x + 1).get(y + 1))) {
+                //Check tile below right of til is nextTo another tile
+                //If true, add tile to ArrayList<Tile> potentials
+                potentialMoves.add(gameBoard.get(x + 1).get(y + 1));
+                return true;
             }
-            return false;
+        } else {
+            // For odd rows
+
+            if (nextTo(tile, gameBoard.get(x - 1).get(y - 1))) {
+                //Check tile above left of tile is nextTo another tile
+                //If true, add tile to ArrayList<Tile> potentials
+                potentialMoves.add(gameBoard.get(x - 1).get(y - 1));
+                return true;
+            } else if (nextTo(tile, gameBoard.get(x - 1).get(y))) {
+                //Check tile above right of til is nextTo another tile
+                //If true, add tile to ArrayList<Tile> potentials
+                potentialMoves.add(gameBoard.get(x - 1).get(y));
+                return true;
+            } else if (nextTo(tile, gameBoard.get(x).get(y - 1))) {
+                //Check tile to the left of til is nextTo another tile
+                //If true, add tile to ArrayList<Tile> potentials
+                potentialMoves.add(gameBoard.get(x).get(y - 1));
+                return true;
+            } else if (nextTo(tile, gameBoard.get(x).get(y + 1))) {
+                //Check tile to the right of ti is nextTo another tile
+                //If true, add tile to ArrayList<Tile> potentials
+                potentialMoves.add(gameBoard.get(x).get(y + 1));
+                return true;
+            } else if (nextTo(tile, gameBoard.get(x + 1).get(y - 1))) {
+                //Check tile below left of tile is nextTo another tile
+                //If true, add tile to ArrayList<Tile> potentials
+                potentialMoves.add(gameBoard.get(x + 1).get(y - 1));
+                return true;
+            } else if (nextTo(tile, gameBoard.get(x + 1).get(y))) {
+                //Check tile below right of til is nextTo another tile
+                //If true, add tile to ArrayList<Tile> potentials
+                potentialMoves.add(gameBoard.get(x + 1).get(y));
+                return true;
+            }
+
+        }
+        return false;
     }
 
     /**
@@ -679,7 +472,7 @@ public class HiveGameState {
                 //Check tile above left of tile is empty and nextTo
                 //If true, add tile to ArrayList<Tile> potentials
                 potentialMoves.add(gameBoard.get(x-1).get(y-1));
-               return true;
+                return true;
             } else if(gameBoard.get(x-1).get(y).getType() != Tile.Bug.EMPTY &&
                     nextTo(tile, gameBoard.get(x-1).get(y))) {
                 //Check tile above right of til is empty and nextTo
@@ -936,6 +729,48 @@ public class HiveGameState {
         }
         return false;
     }
+    /**ant tile movement
+     *
+     */
+    public boolean antMove(Tile tile,int x,int y){
+        if(antValidMove(tile,x,y))
+        {
+            makeMove(tile, x, y);
+
+            return true;
+        }
+        return false;
+    }
+    //determines if the ant tile is on edge
+    private boolean antValidMove(Tile tile,int x,int y) {
+        Tile nextile = gameBoard.get(x).get(y);
+        //create arraylist of potential invalid moves
+
+        ArrayList<int[]> inValidMoves = new ArrayList<int[]>();
+        for (int s = 0; s < 14; s++) {
+            for (int j = 0; j < 14; j++) {
+                int[] inValid = new int[2];
+                if (s == 0 || s == 14 || j == 0 || j == 14) {
+                    inValid[0] = s;
+                    inValid[1] = j;
+                    inValidMoves.add(inValid);
+                }
+            }
+        }
+        int[] potentialMove = new int[2];
+        potentialMove[0] = nextile.getIndexX();
+        potentialMove[1] = nextile.getIndexY();
+        if(inValidMoves.contains(potentialMove)){
+            return false;
+        }
+
+        return true;
+
+
+    }
+
+
+
 
     /**
      * Ensures Tile tile is empty and next to an occupied Tile that is not the selected Tile.
@@ -979,7 +814,7 @@ public class HiveGameState {
                     //Check tile below right of tile
                     return true;
                 }
-                } else {
+            } else {
                 // For odd rows
 
                 if(gameBoard.get(x-1).get(y-1).getType() != Tile.Bug.EMPTY &&
@@ -1020,12 +855,12 @@ public class HiveGameState {
      */
     @Override
     public String toString(){
-        String currentState = whoseTurn + "'s turn, here is the game board:\n";
+        String currentState = "";
         for (ArrayList<Tile> row: gameBoard) {
             for (Tile tile : row) {
                 switch (tile.getType()) {
                     case EMPTY:
-                        currentState += "***"; //add space for nothing there
+                        currentState += " "; //add space for nothing there
                         break;
                     case QUEEN_BEE:
                         currentState += tile.getPlayerPiece().name() + "Q";
@@ -1045,54 +880,20 @@ public class HiveGameState {
 
                 }
             }
-            currentState += "\n";
         }
-        for (int i = 0; i < piecesRemain.length; i++) {
-            if(i == 0){
-                currentState +=  "\nPLAYER1's pieces in hand:\n";
-            }
-            else{
-                currentState +=  "PLAYER2's pieces in hand:\n";
-            }
-            for (int j = 0; j < piecesRemain[i].length; j++) {
-                switch(j){
-                    case 0: // 1 Queen Bee
-                        currentState += " Queen:" + piecesRemain[i][j];
-                        break;
-                    case 1: //4 Spiders
-                        currentState += " Spiders:" + piecesRemain[i][j];
-                        break;
-
-                    case 2: //4 Beetles
-                        currentState += " Beetles:" + piecesRemain[i][j];
-                        break;
-
-                    case 3: //6 Grasshoppers
-                        currentState += " Grasshoppers:" + piecesRemain[i][j];
-                        break;
-
-                    case 4: //6 Soldier Ants
-                        currentState += " Ants:" + piecesRemain[i][j];
-                        break;
-                }
-            }
-            currentState += "\n";
-        }
-        currentState += "\n"; //looks better this way, it ain't much, but it's honest work
         return currentState;
     }
 
     /**
      * Move the tile from one spot to a new destination, (swaps tiles)
      * @param moveTile the old tile moving
-     * @param newXIndex the new y coordinates the old tile will go
-     * @param newYIndex the new x coordinates the old tile will go
+     * @param newXCoord the new y coordinates the old tile will go
+     * @param newYCoord the new x coordinates the old tile will go
      * @return a boolean, true if it successfully moved, false if the tile failed to move
      */
-    public boolean makeMove(Tile moveTile, int newXIndex, int newYIndex) {
-        // commented out coordinate things for testing purposes so we can pass in indexes
+    public boolean makeMove(Tile moveTile, int newXCoord, int newYCoord) {
         //need to get position of newTile based on x and y coordinates
-        //int[] newTileCords = positionOfTile(newXCoord, newYCoord);
+        int[] newTileCords = positionOfTile(newXCoord, newYCoord);
 
         //hold old Position
         int[] oldTileCords = new int[2];
@@ -1100,25 +901,26 @@ public class HiveGameState {
         oldTileCords[1] = moveTile.getIndexY();
 
         //if potentialMoves holds tile at newPosition then swap
-        //if(potentialMoves.contains(gameBoard.get(newXIndex).get(newYIndex))){
+        if(potentialMoves.contains(gameBoard.get(newTileCords[0]).get(newTileCords[1]))){
 
-        //assign newIndexes to move Tile
-        moveTile.setIndexX(newXIndex);
-        moveTile.setIndexY(newYIndex);
+            //assign newIndexes to move Tile
+            moveTile.setIndexX(newTileCords[0]);
+            moveTile.setIndexY(newTileCords[1]);
 
             //not on top of something so make new empty till
-        if(moveTile.getOnTopOf() == null){
-            gameBoard.get(newXIndex).set(newYIndex, moveTile);
-            Tile emptyTile = new Tile(oldTileCords[0], oldTileCords[1], Tile.PlayerPiece.EMPTY);
-            gameBoard.get(oldTileCords[0]).set(oldTileCords[1], emptyTile);
-        }
+            if(moveTile.getOnTopOf() == null){
+                gameBoard.get(newTileCords[0]).set(newTileCords[1], moveTile);
+                Tile emptyTile = new Tile(oldTileCords[0], oldTileCords[1], Tile.PlayerPiece.EMPTY);
+                gameBoard.get(oldTileCords[0]).set(oldTileCords[1], emptyTile);
+            }
 
             //on top of something so don't make new empty tile
-        else{
-            gameBoard.get(newXIndex).set(newYIndex, moveTile);
+            else{
+                gameBoard.get(newTileCords[0]).set(newTileCords[1], moveTile);
+            }
+            return true;
         }
-        return true;
-       // return false;
+        return false;
     }
 
     /**
@@ -1140,68 +942,7 @@ public class HiveGameState {
         return positionInGameBoard;
     }
 
-    /**
-     * Shows a piece has been removed from the integer representation of the player's hand
-     * @param bug the bug piece to decrement in the "hand"
-     */
-    public void removePiecesRemain(Tile.Bug bug){
-        int player;
-        if(getWhoseTurn() == Turn.PLAYER1){
-            player = 0;
-        }
-        else{
-            player = 1;
-        }
-        switch(bug){
-            case QUEEN_BEE: // 1 Queen Bee
-                piecesRemain[player][0]--;
-                break;
-            case SPIDER: //4 Spiders
-                piecesRemain[player][1]--;
-                break;
-
-            case BEETLE: //4 Beetles
-                piecesRemain[player][2]--;
-                break;
-
-            case GRASSHOPPER: //6 Grasshoppers
-                piecesRemain[player][3]--;
-                break;
-
-            case ANT: //6 Soldier Ants
-                piecesRemain[player][4]--;
-                break;
-        }
-    }
-
-    //testing classes for playing Oracle
     public void addTile(Tile newTile){
         gameBoard.get(newTile.getIndexX()).set(newTile.getIndexY(), newTile);
     }
-
-    public Tile getTile(int x, int y){
-        return gameBoard.get(x).get(y);
-    }
-
-    public ArrayList<ArrayList<Tile>> getGameBoard(){
-        return gameBoard;
-    }
-
-    public ArrayList<ArrayList<Tile>> getDisplayBoard(){
-        return displayBoard;
-    }
-
-    public int[][] getPiecesRemain(){
-        return piecesRemain;
-    }
-
-    public void setWhoseTurn(Turn turn){
-        whoseTurn = turn;
-    }
-
-    public Turn getWhoseTurn(){
-        return whoseTurn;
-    }
-
-
 }
