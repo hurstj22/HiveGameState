@@ -41,10 +41,11 @@ public class Tile {
         indexX = x;
         indexY = y;
         this.piece = piece;
+        visited = false;
     }
 
     /**
-     * Uhh this isn't supposed to bethe copy constructor. Its supposed to be used in move to
+     * To be used in move to
      * make a piece have another beneath it.
      * @param bug which type of piece is getting copied
      * @param onTop
