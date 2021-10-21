@@ -936,6 +936,41 @@ public class HiveGameState {
         }
         return false;
     }
+    /**ant tile movement
+     *
+     */
+    public boolean antMove(Tile tile,int x,int y){
+        if(antValidMove(tile,x,y))
+        {
+            makeMove(tile, x, y);
+            return true;
+        }
+        return false;
+    }
+    //determines if the ant tile is on edge
+    private boolean antValidMove(Tile tile,int x,int y) {
+        Tile nextile = gameBoard.get(x).get(y);
+        //create arraylist of potential invalid moves
+
+        ArrayList<int[]> inValidMoves = new ArrayList<int[]>();
+        for (int s = 0; s < 14; s++) {
+            for (int j = 0; j < 14; j++) {
+                int[] inValid = new int[2];
+                if (s == 0 || s == 14 || j == 0 || j == 14) {
+                    inValid[0] = s;
+                    inValid[1] = j;
+                    inValidMoves.add(inValid);
+                }
+            }
+        }
+        int[] potentialMove = new int[2];
+        potentialMove[0] = nextile.getIndexX();
+        potentialMove[1] = nextile.getIndexY();
+        if(inValidMoves.contains(potentialMove)){
+            return false;
+        }
+        return true;
+    }
 
     /**
      * Ensures Tile tile is empty and next to an occupied Tile that is not the selected Tile.
