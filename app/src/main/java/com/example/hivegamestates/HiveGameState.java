@@ -508,7 +508,7 @@ public class HiveGameState {
      */
     public boolean selectTile(Tile tile) {
         //we should make sure the person whose turn it is has placed their queen somewhere
-        if(validMove(tile)) {                                       ///ATTENTION, THIS IS WRONG AND NOT FUNCTIONAL
+        if(validMove(tile)) {
             //if the piece can be moved legally
             switch (tile.getType()){
                 case ANT:
