@@ -512,7 +512,8 @@ public class HiveGameState {
             //if the piece can be moved legally
             switch (tile.getType()){
                 case ANT:
-                    //
+                    //utilize the ant function to find potential moves
+                    return antMove(tile, tile.getIndexX(), tile.getIndexY());
                 case BEETLE:
                     //utilize the beetleSearch function to find potential moves.
                     return beetleSearch(tile);
@@ -942,7 +943,7 @@ public class HiveGameState {
     public boolean antMove(Tile tile,int x,int y){
         if(antValidMove(tile,x,y))
         {
-            makeMove(tile, x, y);
+            //makeMove(tile, x, y);
             return true;
         }
         return false;
